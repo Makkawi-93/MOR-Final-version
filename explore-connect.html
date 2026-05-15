@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Producers & Markets – MOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #1a1a1a; }
+
+        nav { width:100%; height:64px; background:#fff; border-bottom:1px solid #e0e0e0; display:flex; align-items:center; padding:0 32px; position:sticky; top:0; z-index:1000; gap:16px; }
+        .nav-logo-box { width:48px; height:48px; flex-shrink:0; }
+        .nav-logo-box img { width:100%; height:100%; object-fit:contain; }
+        .nav-brand { display:flex; flex-direction:column; justify-content:center; margin-right:32px; }
+        .nav-brand-name { font-size:12px; font-weight:600; color:#1a1a1a; line-height:1.2; max-width:160px; }
+        .nav-brand-short { font-size:11px; font-weight:700; color:#888; letter-spacing:0.08em; }
+        .nav-links { display:flex; align-items:center; gap:32px; flex:1; }
+        .nav-link { font-size:14px; color:#1a1a1a; text-decoration:none; background:none; border:none; cursor:pointer; font-family:Arial,sans-serif; }
+        .nav-link:hover { text-decoration:underline; }
+        .nav-lang { display:flex; gap:8px; margin-left:auto; }
+        .lang-btn { font-size:14px; color:#1a1a1a; background:none; border:none; cursor:pointer; font-family:Arial,sans-serif; }
+        .lang-btn.active { font-weight:700; }
+
+        .article-wrapper { max-width: 860px; margin: 0 auto; padding: 60px 40px 100px; }
+
+        .breadcrumb { font-size: 13px; color: #888; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: #888; text-decoration: none; }
+        .breadcrumb a:hover { color: #1a1a1a; text-decoration: underline; }
+        .breadcrumb span { color: #ccc; }
+
+        .article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #8a3a0e; background: #f7ede5; border-radius: 4px; padding: 4px 10px; margin-bottom: 20px; }
+
+        .article-title { font-family: 'Playfair Display', Georgia, serif; font-size: 42px; font-weight: 900; line-height: 1.15; color: #0f1923; margin-bottom: 16px; }
+
+        .article-lead { font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 300; color: #444; line-height: 1.65; margin-bottom: 32px; border-left: 3px solid #8a3a0e; padding-left: 20px; }
+
+        .article-meta { font-size: 12px; color: #aaa; margin-bottom: 40px; display: flex; align-items: center; gap: 16px; }
+        .article-meta-dot { width: 3px; height: 3px; background: #ccc; border-radius: 50%; }
+
+        .article-image-wrap { width: 100%; aspect-ratio: 16/7; background: #edd9c8; border-radius: 16px; overflow: hidden; margin-bottom: 48px; position: relative; box-shadow: 0 4px 32px rgba(0,0,0,0.10); }
+        .article-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .article-image-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #8a3a0e; }
+        .article-image-caption { font-size: 12px; color: #aaa; margin-top: -36px; margin-bottom: 48px; text-align: center; font-style: italic; }
+
+        .article-body { font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; line-height: 1.85; color: #2a2a2a; }
+        .article-body p { margin-bottom: 24px; }
+        .article-body h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; color: #0f1923; margin: 48px 0 16px; }
+        .article-body h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; color: #0f1923; margin: 32px 0 12px; }
+        .article-body strong { font-weight: 600; color: #1a1a1a; }
+
+        .pull-quote { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-style: italic; color: #8a3a0e; border-top: 2px solid #8a3a0e; border-bottom: 2px solid #8a3a0e; padding: 24px 0; margin: 40px 0; line-height: 1.5; }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 60px; font-size: 14px; color: #1a1a1a; text-decoration: none; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 20px; transition: background 0.2s; }
+        .back-btn:hover { background: #f5f5f5; }
+
+        [data-lang] { display: none; }
+        body.lang-it [data-lang="it"] { display: inline; }
+        body.lang-en [data-lang="en"] { display: inline; }
+        body.lang-it .lang-it-block { display: block; }
+        body.lang-en .lang-en-block { display: block; }
+        .lang-it-block, .lang-en-block { display: none; }
+
+        footer { background: #593922; padding: 20px 40px; text-align: center; font-size: 13px; margin-top: 60px; color: #ffffff; }
+    </style>
+</head>
+<body class="lang-en">
+
+<header class="site-header">
+  <div class="container navbar">
+    <a class="brand" href="index.html">
+      <img src="images/logo.PNG" alt="Logo MOR">
+      <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+    </a>
+    <nav class="nav-links" aria-label="Navigazione principale">
+      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+      <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+      <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="article-wrapper">
+
+    <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>›</span>
+        <span><span data-lang="it">Connetti Produttori e Mercati</span><span data-lang="en">Connect Producers & Markets</span></span>
+    </div>
+
+    <div class="article-tag"><span data-lang="it">Filiere & Comunità</span><span data-lang="en">Supply Chains & Community</span></div>
+
+    <h1 class="article-title lang-en-block">Connect Producers & Markets:<br>Visualizing Piedmont's Agricultural Network</h1>
+    <h1 class="article-title lang-it-block">Connetti Produttori e Mercati:<br>Visualizzare la Rete Agricola del Piemonte</h1>
+
+    <p class="article-lead lang-en-block">Visualize connections between local producers, municipalities and tourism supply chains across Piemonte. MOR maps the relationships that hold the regional food economy together.</p>
+    <p class="article-lead lang-it-block">Visualizza le connessioni tra produttori locali, comuni e filiere turistiche della regione Piemonte. MOR mappa le relazioni che tengono insieme l'economia alimentare regionale.</p>
+
+    <div class="article-meta">
+        <span>MOR Team</span>
+        <span class="article-meta-dot"></span>
+        <span>2025</span>
+        <span class="article-meta-dot"></span>
+        <span><span data-lang="it">6 min di lettura</span><span data-lang="en">6 min read</span></span>
+    </div>
+
+    <!-- HERO IMAGE — place your image at: images/explore-connect.jpg -->
+    <div class="article-image-wrap">
+        <img src="images/explore-connect.jpg" alt="Connect Producers and Markets" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="article-image-placeholder">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="12" cy="32" r="6" fill="#8a3a0e" opacity="0.8"/>
+                <circle cx="32" cy="12" r="6" fill="#8a3a0e" opacity="0.8"/>
+                <circle cx="52" cy="32" r="6" fill="#8a3a0e" opacity="0.8"/>
+                <circle cx="32" cy="52" r="6" fill="#8a3a0e" opacity="0.8"/>
+                <circle cx="32" cy="32" r="5" fill="#8a3a0e"/>
+                <line x1="17" y1="32" x2="27" y2="32" stroke="#8a3a0e" stroke-width="2"/>
+                <line x1="37" y1="32" x2="47" y2="32" stroke="#8a3a0e" stroke-width="2"/>
+                <line x1="32" y1="17" x2="32" y2="27" stroke="#8a3a0e" stroke-width="2"/>
+                <line x1="32" y1="37" x2="32" y2="47" stroke="#8a3a0e" stroke-width="2"/>
+                <line x1="17" y1="27" x2="27" y2="17" stroke="#8a3a0e" stroke-width="1.5" opacity="0.4"/>
+                <line x1="37" y1="17" x2="47" y2="27" stroke="#8a3a0e" stroke-width="1.5" opacity="0.4"/>
+            </svg>
+            <span style="font-size:13px; font-family:Arial,sans-serif;">Place your image at <strong>images/explore-connect.jpg</strong></span>
+        </div>
+    </div>
+    <p class="article-image-caption lang-en-block">The network of producers, cooperatives and municipal markets that forms the backbone of Piedmont's agricultural economy.</p>
+    <p class="article-image-caption lang-it-block">La rete di produttori, cooperative e mercati comunali che costituisce la spina dorsale dell'economia agricola piemontese.</p>
+
+    <div class="article-body">
+
+        <div class="lang-en-block">
+            <p>An agricultural economy is more than the sum of its individual farms. It is a web of relationships — between producers who share logistics, municipalities that host markets, cooperatives that coordinate supply, and tourism operators who turn local products into visitor experiences. Understanding these relationships, and where they are strong or weak, is the foundation of effective regional planning.</p>
+
+            <p>MOR's connectivity layer makes this web visible. By mapping the formal and informal relationships between agricultural actors across the Asti and Cuneo provinces, it reveals the structure of Piedmont's food economy in geographic terms — showing which nodes are most connected, which areas are underserved by cooperative infrastructure, and where new relationships could create the most value.</p>
+
+            <div class="pull-quote">"The strength of a regional food economy is not measured farm by farm — it is measured by the density and resilience of the connections between farms."</div>
+
+            <h2>Mapping Producer Networks</h2>
+            <p>The layer begins with individual producers — farmers, growers, and agricultural businesses registered as active in the Asti and Cuneo provinces. Each producer is mapped at their primary production location and linked to the cooperatives, markets, and supply chain partners they work with. The resulting network diagram, overlaid on the geographic map, immediately reveals the clustering patterns that define regional agricultural identity.</p>
+
+            <p>Some municipalities emerge as dense hubs with many producers connected to multiple partners — resilient, well-integrated nodes in the regional network. Others appear as isolated producers with few connections — potentially vulnerable to market changes, but also representing opportunities for outreach and cooperative development.</p>
+
+            <h2>Municipality-Level Analysis</h2>
+            <p>At the municipal level, the layer tracks the number of active producers, the diversity of product types, the presence of cooperative infrastructure, and the degree of integration with tourism supply chains. This produces a connectivity score for each municipality — a simple indicator of how well-integrated the local agricultural economy is with the broader regional system.</p>
+
+            <h3>Tourism Integration</h3>
+            <p>A key dimension of the connectivity layer is the relationship between agricultural producers and the tourism economy. The Roero attracts significant visitor numbers — wine tourists, food travelers, and agri-tourism guests — and the degree to which local producers are connected to these visitors varies enormously across the territory.</p>
+
+            <p>The layer maps certified agri-tourism operators, farm shops, local food markets, and restaurant supply relationships alongside agricultural production data, revealing where the tourism-agriculture connection is strongest and where it remains largely undeveloped.</p>
+
+            <h2>Using the Network to Plan</h2>
+            <p>For regional planners and cooperative managers, the connectivity layer is a planning tool. Areas with low connectivity scores and high production capacity are natural targets for cooperative outreach and infrastructure investment. Areas with strong producer networks but weak tourism integration represent opportunities for agri-tourism development programs. Areas with good tourism connections but declining production signal a need for producer support and succession planning.</p>
+
+            <p>By making these patterns visible at a glance, MOR allows stakeholders at every level to make better-informed decisions about where to focus resources, build relationships, and invest in the long-term resilience of Piedmont's agricultural economy.</p>
+        </div>
+
+        <div class="lang-it-block">
+            <p>Un'economia agricola è più della somma delle sue singole aziende. È una rete di relazioni — tra produttori che condividono la logistica, comuni che ospitano mercati, cooperative che coordinano l'offerta e operatori turistici che trasformano i prodotti locali in esperienze per i visitatori. Comprendere queste relazioni, e dove sono forti o deboli, è la base di una pianificazione regionale efficace.</p>
+
+            <p>Il layer di connettività di MOR rende visibile questa rete. Mappando le relazioni formali e informali tra gli attori agricoli nelle province di Asti e Cuneo, rivela la struttura dell'economia alimentare piemontese in termini geografici — mostrando quali nodi sono più connessi, quali aree sono poco servite dall'infrastruttura cooperativa e dove nuove relazioni potrebbero creare il massimo valore.</p>
+
+            <div class="pull-quote">"La forza di un'economia alimentare regionale non si misura azienda per azienda — si misura dalla densità e dalla resilienza delle connessioni tra le aziende."</div>
+
+            <h2>Mappare le Reti dei Produttori</h2>
+            <p>Il layer parte dai singoli produttori — agricoltori, coltivatori e imprese agricole registrate come attive nelle province di Asti e Cuneo. Ogni produttore viene mappato nella sua principale posizione di produzione e collegato alle cooperative, ai mercati e ai partner della filiera con cui lavora.</p>
+
+            <p>Alcuni comuni emergono come hub densi con molti produttori collegati a molteplici partner — nodi resilienti e ben integrati nella rete regionale. Altri appaiono come produttori isolati con poche connessioni — potenzialmente vulnerabili ai cambiamenti del mercato, ma anche rappresentanti opportunità di sviluppo cooperativo.</p>
+
+            <h2>Analisi a Livello Comunale</h2>
+            <p>A livello comunale, il layer traccia il numero di produttori attivi, la diversità dei tipi di prodotto, la presenza di infrastrutture cooperative e il grado di integrazione con le filiere turistiche. Questo produce un punteggio di connettività per ogni comune — un semplice indicatore di quanto sia ben integrata l'economia agricola locale nel sistema regionale più ampio.</p>
+
+            <h3>Integrazione Turistica</h3>
+            <p>Una dimensione chiave del layer di connettività è il rapporto tra produttori agricoli e l'economia turistica. Il Roero attrae un numero significativo di visitatori — turisti del vino, viaggiatori gastronomici e ospiti di agriturismi — e il grado in cui i produttori locali sono connessi a questi visitatori varia enormemente sul territorio.</p>
+        </div>
+    </div>
+
+    <a class="back-btn" href="index.html">← <span data-lang="it">Torna alla Home</span><span data-lang="en">Back to Home</span></a>
+</div>
+
+<footer>Copy rights © 2026 MOR.</footer>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(function(b){
+            b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+        });
+    }
+    setLang('en');
+</script>
+</body>
+</html>

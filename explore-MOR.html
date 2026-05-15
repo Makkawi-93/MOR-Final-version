@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOR: una piattaforma GIS per leggere il territorio</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="index.html">
+        <img src="images/logo.png" alt="Logo MOR">
+        <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+      </a>
+      <nav class="nav-links" aria-label="Navigazione principale">
+        <a href="index.html" data-i18n="nav.home">Home</a>
+        <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+        <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+        <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+      </nav>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-hero">
+    <div class="container">
+      <div class="breadcrumbs" data-i18n="exp.breadcrumb">Home / Panoramica</div>
+      <span class="kicker" data-i18n="exp.kicker">Panoramica del progetto</span>
+      <h1 data-i18n="exp.h1">MOR: una piattaforma GIS per leggere il territorio</h1>
+      <p class="lead" data-i18n="exp.lead">La piattaforma MOR è un applicativo WebGIS pilota sviluppato per integrare e visualizzare dati territoriali rilevanti per il sistema agroalimentare del Roero.</p>
+      <p class="support" data-i18n="exp.support">Il portale non ha finalità valutative o autorizzative, ma consente di consultare in forma georeferenziata dataset utili all'analisi della filiera, della logistica e delle relazioni con il contesto territoriale.</p>
+    </div>
+  </main>
+
+  <section class="section">
+    <div class="container article-grid">
+      <div class="article-image">
+        <img src="images/explore-MOR.jpg" alt="Le colline del Roero in Piemonte">
+      </div>
+      <div class="panel article-copy">
+        <p data-i18n="exp.p1">Attraverso la consultazione dei layer è possibile osservare i flussi origine-destinazione nel mercato chiuso dei prodotti ortofrutticoli, secondo censimento del 2026. È inoltre rappresentata l'intersezione con aree e percorsi turistici. In lettura con apposita autorizzazione, è possibile visualizzare i fattori di esclusione e di idoneità relativi all'installazione di pannelli agrifotovoltaici.</p>
+        <p data-i18n="exp.p2">La piattaforma è quindi uno strumento di lettura territoriale: raccoglie informazioni eterogenee, le rende navigabili su base geografica e permette una consultazione sintetica ma strutturata dei risultati prodotti dal progetto.</p>
+      </div>
+      <div class="panel">
+        <h2 class="section-title" style="font-size:32px;" data-i18n="exp.layers.title">Layer disponibili</h2>
+        <div class="cards" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+          <article class="card"><div class="card-body"><h3 class="card-title" style="font-size:24px;" data-i18n="exp.card.photo.title">Agrifotovoltaico</h3><p data-i18n="exp.card.photo.desc">Mappatura territoriale di terreni censiti per analisi localizzative.</p><a class="btn secondary" href="photovoltaic.html" data-i18n="btn.open">Apri</a></div></article>
+          <article class="card"><div class="card-body"><h3 class="card-title" style="font-size:24px;" data-i18n="exp.card.od.title">Origine-destinazione</h3><p data-i18n="exp.card.od.desc">Visualizzazione dei flussi storici dei prodotti ortofrutticoli.</p><a class="btn secondary" href="origin-destination.html" data-i18n="btn.open">Apri</a></div></article>
+          <article class="card"><div class="card-body"><h3 class="card-title" style="font-size:24px;" data-i18n="exp.card.tourism.title">Filiere turistiche</h3><p data-i18n="exp.card.tourism.desc">Aree di intersezione tra sistema agricolo e sistema turistico.</p><a class="btn secondary" href="tourism.html" data-i18n="btn.open">Apri</a></div></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container">Copy rights &copy; 2026 MOR.</div></footer>
+  <script src="lang.js"></script>
+</body>
+</html>

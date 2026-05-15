@@ -1,0 +1,297 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>Tourism Supply Chains Map – MOR</title>
+    <link rel="stylesheet" href="../shared.css">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; font-family: 'Raleway', sans-serif; }
+        #map { position: absolute; top: 86px; left: 280px; right: 320px; bottom: 0; }
+
+        #filter-panel { position: absolute; top: 86px; left: 0; width: 280px; height: calc(100% - 86px); background: #fff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; z-index: 1000; overflow-y: auto; }
+        #filter-header { padding: 16px 18px 12px; border-bottom: 1px solid #e8e8e8; flex-shrink: 0; }
+        #filter-header h2 { font-size: 13px; font-weight: 700; color: var(--mor-brown); text-transform: uppercase; letter-spacing: 0.08em; }
+        #filter-header p { font-size: 11px; color: var(--mor-brown-soft); margin-top: 4px; }
+
+        .acc-box { border-bottom: 1px solid #e8e8e8; }
+        .acc-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+        .acc-header:hover { background: #f5f8ff; }
+        .acc-header.active { background: #f5f5f6; }
+        .acc-title { font-size: 13px; font-weight: 700; color: var(--mor-brown); white-space: nowrap; }
+        .acc-title span:first-child { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+        .acc-arrow { font-size: 10px; color: var(--mor-brown-soft); transition: transform 0.2s; }
+        .acc-header.active .acc-arrow { transform: rotate(180deg); }
+        .acc-body { display: none; padding: 8px 18px 14px; background: #f5f5f6; }
+        .acc-body.open { display: block; }
+        .acc-layer-item { font-size: 12px; color: var(--mor-brown-soft); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+        .acc-layer-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+        .acc-layer-line { width: 18px; height: 4px; border-radius: 2px; flex-shrink: 0; }
+
+        /* light brown navbar + panels */
+        .site-header { background: #e8d5b0; backdrop-filter: none; border-bottom-color: #d4bfa0; }
+        #filter-panel { background: #fdf8f0 !important; border-right-color: #ead9be; }
+        #legend-panel { background: #fdf8f0 !important; border-left-color: #ead9be; }
+
+        .layer-eye { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 14px; transition: opacity 0.2s; padding: 0 2px; flex-shrink: 0; color: var(--mor-brown-soft); }
+        .layer-eye.hidden-layer { color: #ccc; text-decoration: line-through; }
+        .layer-eye:hover { color: var(--mor-brown); }
+
+        #back-btn { margin: 14px 18px; padding: 9px 14px; background: var(--mor-brown); color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Raleway', sans-serif; text-align: center; text-decoration: none; display: block; transition: background 0.2s; }
+        #back-btn:hover { background: var(--mor-brown-soft); }
+
+        #legend-panel { position: absolute; top: 86px; right: 0; width: 320px; height: calc(100% - 86px); background: #fff; border-left: 1px solid #e0e0e0; display: flex; flex-direction: column; z-index: 1000; overflow-y: auto; padding: 16px 18px; }
+        #legend-panel h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mor-brown); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e8e8e8; }
+        .legend-empty { font-size: 12px; color: var(--mor-brown-soft); margin-top: 20px; text-align: center; line-height: 1.6; }
+        .legend-group { margin-bottom: 20px; }
+        .legend-group-title { font-size: 12px; font-weight: 700; color: var(--mor-brown); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+        .legend-item { display: flex; align-items: center; gap: 10px; padding: 3px 0; }
+        .legend-swatch { width: 18px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); }
+        .legend-swatch.line { height: 4px; border: none; border-radius: 2px; width: 24px; }
+        .legend-label { font-size: 12px; color: var(--mor-brown-soft); }
+    </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container navbar">
+    <a class="brand" href="../index.html">
+      <img src="../images/logo.PNG" alt="Logo MOR">
+      <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+    </a>
+    <nav class="nav-links" aria-label="Navigazione principale">
+      <a href="../index.html" data-i18n="nav.home">Home</a>
+      <a href="../index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+      <a href="../index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+      <a href="../index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- LEFT FILTER PANEL -->
+<div id="filter-panel">
+    <div id="filter-header">
+        <h2 data-i18n="gis.tou.filter.title">Layer Filter</h2>
+        <p data-i18n="gis.tou.filter.hint">Clicca una sezione per attivare i layer</p>
+    </div>
+
+    <!-- BOX 1: AREA DI STUDIO -->
+    <div class="acc-box" id="box-study">
+        <div class="acc-header" onclick="toggleBox('study')">
+            <div class="acc-title"><span style="background:#d4894a;"></span><span data-i18n="gis.tou.study">Area di Studio</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-study">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:rgba(210,139,65,0.8);"></div><span data-i18n="gis.tou.roero">Comuni del Roero</span>
+                <button class="layer-eye" id="eye-roero" data-legend-id="leg-roero" onclick="toggleSingleLayer('roero',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:rgba(49,57,25,0.8);"></div><span data-i18n="gis.tou.cuneo">Provincia di Cuneo</span>
+                <button class="layer-eye" id="eye-cuneo" data-legend-id="leg-cuneo" onclick="toggleSingleLayer('cuneo',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:rgba(243,115,8,0.8);"></div><span data-i18n="gis.tou.asti">Provincia di Asti</span>
+                <button class="layer-eye" id="eye-asti" data-legend-id="leg-asti" onclick="toggleSingleLayer('asti',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:rgba(183,72,75,0.8);"></div><span data-i18n="gis.tou.alessandria">Provincia di Alessandria</span>
+                <button class="layer-eye" id="eye-alessandria" data-legend-id="leg-alessandria" onclick="toggleSingleLayer('alessandria',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:rgba(208,192,165,0.8);"></div><span data-i18n="gis.tou.regione">Regione Piemonte</span>
+                <button class="layer-eye" id="eye-regione" data-legend-id="leg-regione" onclick="toggleSingleLayer('regione',this)">&#128065;</button></div>
+        </div>
+    </div>
+
+    <!-- BOX 2: WINETOUR TRA I CRU DEL ROERO -->
+    <div class="acc-box" id="box-tracks">
+        <div class="acc-header" onclick="toggleBox('tracks')">
+            <div class="acc-title"><span style="background:#e77148;"></span><span data-i18n="gis.tou.tracks">WineTour tra i cru del Roero</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-tracks">
+            <div class="acc-layer-item"><div class="acc-layer-line" style="background:rgba(231,113,72,1);"></div><span data-i18n="gis.tou.track4">Percorso 4</span>
+                <button class="layer-eye" id="eye-track4" data-legend-id="leg-track4" onclick="toggleSingleLayer('track4',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-line" style="background:rgba(243,166,178,1);"></div><span data-i18n="gis.tou.track3">Percorso 3</span>
+                <button class="layer-eye" id="eye-track3" data-legend-id="leg-track3" onclick="toggleSingleLayer('track3',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-line" style="background:rgba(213,180,60,1);"></div><span data-i18n="gis.tou.track2">Percorso 2</span>
+                <button class="layer-eye" id="eye-track2" data-legend-id="leg-track2" onclick="toggleSingleLayer('track2',this)">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-line" style="background:rgba(225,89,137,1);"></div><span data-i18n="gis.tou.track1">Percorso 1</span>
+                <button class="layer-eye" id="eye-track1" data-legend-id="leg-track1" onclick="toggleSingleLayer('track1',this)">&#128065;</button></div>
+        </div>
+    </div>
+
+    <!-- BOX 3: MARKET LOCATION -->
+    <div class="acc-box" id="box-market">
+        <div class="acc-header" onclick="toggleBox('market')">
+            <div class="acc-title"><span style="background:#cc0000;"></span><span data-i18n="gis.tou.market.group">Localizzazione Mercato</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-market">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#cc0000; border-radius:50%;"></div><span data-i18n="gis.tou.market.name">Mercato Ortofrutticolo del Roero</span>
+                <button class="layer-eye" id="eye-market" data-legend-id="leg-market" onclick="toggleSingleLayer('market',this)">&#128065;</button></div>
+        </div>
+    </div>
+
+    <a id="back-btn" href="javascript:history.back()" data-i18n="gis.tou.back">&#8592; Back</a>
+</div>
+
+<!-- MAP -->
+<div id="map"></div>
+
+<!-- RIGHT LEGENDA PANEL -->
+<div id="legend-panel">
+    <h3 data-i18n="gis.tou.legend.title">Legend</h3>
+    <div id="legend-content">
+        <p class="legend-empty" data-i18n="gis.tou.legend.empty">Select a layer group on the left to see the legend.</p>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="js/leaflet.js"></script>
+<script src="js/leaflet-svg-shape-markers.min.js"></script>
+<script src="js/leaflet.rotatedMarker.js"></script>
+<script src="js/leaflet.pattern.js"></script>
+<script src="js/Autolinker.min.js"></script>
+<script src="js/labelgun.min.js"></script>
+<script src="js/labels.js"></script>
+<script src="js/multi-style-layer.js"></script>
+<script src="js/qgis2web_expressions.js"></script>
+<script src="data/regione_piemonte_1.js"></script>
+<script src="data/provincia_di_alessandria_2.js"></script>
+<script src="data/provincia_di_asti_3.js"></script>
+<script src="data/provincia_di_cuneo_4.js"></script>
+<script src="data/roero_5.js"></script>
+<script src="data/Track_4_6.js"></script>
+<script src="data/Track_3_7.js"></script>
+<script src="data/Track_2_8.js"></script>
+<script src="data/tracks_1_9.js"></script>
+<script src="data/mercato_ortofrutticolo_del_roero_10.js"></script>
+
+<script>
+var map = L.map('map', { zoomControl:true, maxZoom:28, minZoom:1 })
+    .fitBounds([[44.3,7.2],[45.1,9.0]]);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>', subdomains:'abcd', maxZoom:28
+}).addTo(map);
+
+var autolinker = new Autolinker({truncate:{length:30,location:'smart'}});
+var highlightLayer;
+function highlightFeature(e) {
+    highlightLayer = e.target;
+    var t = e.target.feature.geometry.type;
+    if(t==='LineString'||t==='MultiLineString') highlightLayer.setStyle({color:'rgba(255,255,0,1)'});
+    else highlightLayer.setStyle({fillColor:'rgba(255,255,0,1)',fillOpacity:1});
+    highlightLayer.openPopup();
+}
+function onMouseout(e) {
+    for(var i in e.target._eventParents) if(typeof e.target._eventParents[i].resetStyle==='function') e.target._eventParents[i].resetStyle(e.target);
+    if(typeof e.target.closePopup==='function') e.target.closePopup();
+}
+function makePopup(props) {
+    var html='<table>';
+    for(var k in props) if(props[k]!=null) html+='<tr><th>'+k+'</th><td>'+autolinker.link(String(props[k]))+'</td></tr>';
+    return html+'</table>';
+}
+function evts(l){ l.on({mouseout:onMouseout,mouseover:highlightFeature}); }
+
+// ── AREA DI STUDIO ──
+var layer_regione_1     = L.geoJson(json_regione_piemonte_1,       {style:function(){return{color:'#232323',weight:1,fillColor:'#d0c0a5',fillOpacity:0.5};}});
+var layer_alessandria_2 = L.geoJson(json_provincia_di_alessandria_2,{style:function(){return{color:'#232323',weight:1,fillColor:'#b7484b',fillOpacity:0.6};},onEachFeature:function(f,l){l.bindTooltip(f.properties['DEN_PROV']||'',{permanent:true,offset:[0,-16]});}});
+var layer_asti_3        = L.geoJson(json_provincia_di_asti_3,       {style:function(){return{color:'#232323',weight:1,fillColor:'#f37308',fillOpacity:0.6};},onEachFeature:function(f,l){l.bindTooltip(f.properties['DEN_PROV']||'',{permanent:true,offset:[0,-16]});}});
+var layer_cuneo_4       = L.geoJson(json_provincia_di_cuneo_4,      {style:function(){return{color:'#232323',weight:1,fillColor:'#313919',fillOpacity:0.6};},onEachFeature:function(f,l){l.bindTooltip(f.properties['DEN_PROV']||'',{permanent:true,offset:[0,-16]});}});
+var layer_roero_5       = L.geoJson(json_roero_5,                   {style:function(){return{color:'#232323',weight:1,fillColor:'#d28b41',fillOpacity:0.7};}});
+
+// ── TRACKS ──
+var layer_track4_6  = L.geoJson(json_Track_4_6,   {style:function(){return{color:'#e77148',weight:6,opacity:1};},onEachFeature:function(f,l){evts(l);l.bindPopup(makePopup(f.properties));}});
+var layer_track3_7  = L.geoJson(json_Track_3_7,   {style:function(){return{color:'#f3a6b2',weight:6,opacity:1};},onEachFeature:function(f,l){evts(l);l.bindPopup(makePopup(f.properties));}});
+var layer_track2_8  = L.geoJson(json_Track_2_8,   {style:function(){return{color:'#d5b43c',weight:6,opacity:1};},onEachFeature:function(f,l){evts(l);l.bindPopup(makePopup(f.properties));}});
+var layer_track1_9  = L.geoJson(json_tracks_1_9,  {style:function(){return{color:'#e15989',weight:6,opacity:1};},onEachFeature:function(f,l){evts(l);l.bindPopup(makePopup(f.properties));}});
+
+// ── MARKET ──
+var layer_mercato_10 = L.geoJson(json_mercato_ortofrutticolo_del_roero_10, {
+    pointToLayer: function(f,ll){ return L.circleMarker(ll,{radius:8,color:'#b80808',weight:2,fillColor:'#dc1414',fillOpacity:0.9}); },
+    onEachFeature: function(f,l){ l.bindPopup(makePopup(f.properties)); }
+});
+
+// ── GROUPS ──
+var groups = {
+    study:  [layer_regione_1, layer_alessandria_2, layer_asti_3, layer_cuneo_4, layer_roero_5],
+    tracks: [layer_track4_6, layer_track3_7, layer_track2_8, layer_track1_9],
+    market: [layer_mercato_10]
+};
+var active = { study:false, tracks:false, market:false };
+
+var singleLayerMap = {
+    'roero':       layer_roero_5,
+    'cuneo':       layer_cuneo_4,
+    'asti':        layer_asti_3,
+    'alessandria': layer_alessandria_2,
+    'regione':     layer_regione_1,
+    'track4':      layer_track4_6,
+    'track3':      layer_track3_7,
+    'track2':      layer_track2_8,
+    'track1':      layer_track1_9,
+    'market':      layer_mercato_10
+};
+
+// ── LEGENDAS ──
+var legends = {
+    study: '<div class="legend-group"><div class="legend-group-title" data-i18n="gis.tou.study">Area di Studio</div>' +
+        '<div class="legend-item" id="leg-roero"><div class="legend-swatch" style="background:rgba(210,139,65,0.7)"></div><span class="legend-label" data-i18n="gis.tou.roero">Comuni del Roero</span></div>' +
+        '<div class="legend-item" id="leg-cuneo"><div class="legend-swatch" style="background:rgba(49,57,25,0.6)"></div><span class="legend-label" data-i18n="gis.tou.cuneo">Provincia di Cuneo</span></div>' +
+        '<div class="legend-item" id="leg-asti"><div class="legend-swatch" style="background:rgba(243,115,8,0.6)"></div><span class="legend-label" data-i18n="gis.tou.asti">Provincia di Asti</span></div>' +
+        '<div class="legend-item" id="leg-alessandria"><div class="legend-swatch" style="background:rgba(183,72,75,0.6)"></div><span class="legend-label" data-i18n="gis.tou.alessandria">Provincia di Alessandria</span></div>' +
+        '<div class="legend-item" id="leg-regione"><div class="legend-swatch" style="background:rgba(208,192,165,0.5)"></div><span class="legend-label" data-i18n="gis.tou.regione">Regione Piemonte</span></div></div>',
+    tracks: '<div class="legend-group"><div class="legend-group-title" data-i18n="gis.tou.tracks">WineTour tra i cru del Roero</div>' +
+        '<div class="legend-item" id="leg-track4"><div class="legend-swatch line" style="background:rgba(231,113,72,1)"></div><span class="legend-label" data-i18n="gis.tou.track4">Percorso 4</span></div>' +
+        '<div class="legend-item" id="leg-track3"><div class="legend-swatch line" style="background:rgba(243,166,178,1)"></div><span class="legend-label" data-i18n="gis.tou.track3">Percorso 3</span></div>' +
+        '<div class="legend-item" id="leg-track2"><div class="legend-swatch line" style="background:rgba(213,180,60,1)"></div><span class="legend-label" data-i18n="gis.tou.track2">Percorso 2</span></div>' +
+        '<div class="legend-item" id="leg-track1"><div class="legend-swatch line" style="background:rgba(225,89,137,1)"></div><span class="legend-label" data-i18n="gis.tou.track1">Percorso 1</span></div></div>',
+    market: '<div class="legend-group"><div class="legend-group-title" data-i18n="gis.tou.market.group">Localizzazione Mercato</div>' +
+        '<div class="legend-item" id="leg-market"><div class="legend-swatch" style="background:rgba(220,20,20,0.9);border-radius:50%"></div><span class="legend-label" data-i18n="gis.tou.market.name">Mercato Ortofrutticolo del Roero</span></div></div>'
+};
+
+// ── TOGGLE GROUP ──
+function toggleBox(id) {
+    var header = document.querySelector('#box-'+id+' .acc-header');
+    var body   = document.getElementById('body-'+id);
+    if (active[id]) {
+        groups[id].forEach(function(l){ if(map.hasLayer(l)) map.removeLayer(l); });
+        active[id]=false; header.classList.remove('active'); body.classList.remove('open');
+        body.querySelectorAll('.layer-eye').forEach(function(btn){ btn.classList.remove('hidden-layer'); btn.innerHTML='&#128065;'; });
+    } else {
+        groups[id].forEach(function(l){ if(!map.hasLayer(l)) map.addLayer(l); });
+        active[id]=true; header.classList.add('active'); body.classList.add('open');
+        body.querySelectorAll('.layer-eye').forEach(function(btn){ btn.classList.remove('hidden-layer'); btn.innerHTML='&#128065;'; });
+    }
+    updateLegend();
+}
+
+// ── TOGGLE SINGLE LAYER ──
+function toggleSingleLayer(id, btn) {
+    var layer = singleLayerMap[id];
+    if (!layer) return;
+    var legendId = btn.getAttribute('data-legend-id');
+    if (map.hasLayer(layer)) {
+        map.removeLayer(layer);
+        btn.classList.add('hidden-layer'); btn.innerHTML='&#128683;';
+        if(legendId){ var el=document.getElementById(legendId); if(el) el.style.display='none'; }
+    } else {
+        map.addLayer(layer);
+        btn.classList.remove('hidden-layer'); btn.innerHTML='&#128065;';
+        if(legendId){ var el=document.getElementById(legendId); if(el) el.style.display=''; }
+    }
+}
+
+function updateLegend() {
+    var html='';
+    ['study','tracks','market'].forEach(function(id){ if(active[id]) html+=legends[id]; });
+    document.getElementById('legend-content').innerHTML = html || '<p class="legend-empty" data-i18n="gis.tou.legend.empty">Select a layer group on the left to see the legend.</p>';
+    if (window.setLang) window.setLang(document.documentElement.lang || localStorage.getItem('mor-lang') || 'it');
+}
+
+setTimeout(function(){ map.invalidateSize(); }, 100);
+</script>
+<script src="../lang.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layer filiere turistiche – MOR</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="index.html">
+        <img src="images/logo.png" alt="Logo MOR">
+        <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+      </a>
+      <nav class="nav-links" aria-label="Navigazione principale">
+        <a href="index.html" data-i18n="nav.home">Home</a>
+        <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+        <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+        <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+      </nav>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-hero">
+    <div class="container">
+      <div class="breadcrumbs" data-i18n="tou.breadcrumb">Home / Layer / Filiere turistiche</div>
+      <span class="kicker" data-i18n="nav.infolayer">Layer informativo</span>
+      <h1 data-i18n="tou.h1">Layer filiere turistiche</h1>
+      <p class="lead" data-i18n="tou.lead">Aree di intersezione tra sistema agricolo e sistema turistico.</p>
+      <p class="support" data-i18n="tou.support">Questo layer visualizza l'incrocio tra i dati della filiera agricola e le eventuali filiere turistiche presenti sul territorio.</p>
+      <div class="button-row"><a class="btn primary" href="webgis-tourism/index.html" data-i18n="tou.btn.map">&#128506; Apri Mappa Turismo</a></div>
+    </div>
+  </main>
+
+  <section class="section">
+    <div class="container article-grid">
+      <div class="article-image"><img src="images/tourism.jpg" alt="Filiere turistiche del Roero"></div>
+      <div class="panel article-copy">
+        <p data-i18n="tou.p1">L'obiettivo è restituire una lettura spaziale delle aree in cui produzione agricola, servizi e attrattività territoriale si sovrappongono o interagiscono.</p>
+        <p data-i18n="tou.p2">Il layer ha una funzione informativa e conoscitiva: permette di osservare la distribuzione territoriale dei dati e supporta una lettura integrata del contesto locale all'interno della piattaforma WebGIS.</p>
+        <p data-i18n="tou.p3">Il Roero è inserito tra i siti di Patrimonio Mondiale UNESCO per i suoi paesaggi vitivinicoli. Il contenuto del layer turistico è riferito ai comuni del Roero e ai percorsi "WineTour tra i cru del Roero", nati dalla collaborazione tra il Consorzio di Tutela Roero e l'Ecomuseo delle Rocche del Roero. SitoWeb: https://www.consorziodelroero.it/i-winetour-tra-i-cru-del-roero/ </p>
+      </div>
+      <div class="panel">
+        <h2 class="section-title" style="font-size:32px;" data-i18n="gis.title">Fonti dati GIS</h2>
+        <p class="section-intro" style="margin-bottom:0;" data-i18n="gis.intro">Le fonti riportate fanno riferimento ai dataset utilizzati per la costruzione del layer e sono indicate con il relativo anno di riferimento e regime di licenza, ove disponibile.</p>
+        <table class="sources-table">
+          <thead>
+            <tr>
+              <th data-i18n="th.name">Nome dataset</th>
+              <th data-i18n="th.year">Anno di riferimento</th>
+              <th data-i18n="th.source">Fonte</th>
+              <th data-i18n="th.license">Licenza</th>
+              <th data-i18n="th.link">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-i18n="tou.data.winetour">WineTour tra i cru del Roero</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="tou.data.consorzio">Consorzio di Tutela Roero / Ecomuseo delle Rocche del Roero</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+            </tr>
+            <tr>
+              <td data-i18n="tou.data.comuni">Comuni del Roero</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container">Copy rights &copy; 2026 MOR.</div></footer>
+  <script src="lang.js"></script>
+</body>
+</html>

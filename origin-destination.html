@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layer origine-destinazione – MOR</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .method-box {
+      background: #fdf8f0;
+      border: 1px solid #d4bfa0;
+      border-left: 4px solid #593922;
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-top: 22px;
+    }
+    .method-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: #593922;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .method-box p {
+      font-size: 15px;
+      color: #684935;
+      margin: 0 0 10px;
+      line-height: 1.75;
+    }
+    .method-box p:last-child { margin-bottom: 0; }
+    .od-matrix-wrapper { overflow-x: auto; margin: 14px 0 4px; border-radius: 6px; text-align: center; }
+    .od-matrix { border-collapse: collapse; font-size: 11px; white-space: nowrap; margin: 0 auto; }
+    .od-matrix th, .od-matrix td { padding: 5px 9px; text-align: center; border: 1px solid rgba(255,255,255,0.3); }
+    .od-matrix thead th { background: #7a5230; color: #fff; font-weight: 700; font-family: 'Raleway', sans-serif; }
+    .od-matrix tbody td:first-child { background: #7a5230; color: #fff; font-weight: 700; font-family: 'Raleway', sans-serif; }
+    .od-matrix tbody td { font-family: 'Raleway', sans-serif; font-size: 11px; }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="index.html">
+        <img src="images/logo.png" alt="Logo MOR">
+        <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+      </a>
+      <nav class="nav-links" aria-label="Navigazione principale">
+        <a href="index.html" data-i18n="nav.home">Home</a>
+        <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+        <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+        <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+      </nav>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-hero">
+    <div class="container">
+      <div class="breadcrumbs" data-i18n="od.breadcrumb">Home / Layer / Origine-destinazione</div>
+      <span class="kicker" data-i18n="nav.infolayer">Layer informativo</span>
+      <h1 data-i18n="od.h1">Layer origine-destinazione</h1>
+      <p class="lead" data-i18n="od.lead">Visualizzazione dei flussi storici dei prodotti ortofrutticoli.</p>
+      <p class="support" data-i18n="od.support">Questo layer rappresenta la matrice origine-destinazione dei prodotti ortofrutticoli, costruita a partire dai dati storici disponibili.</p>
+      <div class="button-row">
+        <a class="btn secondary" href="#methodology" data-i18n="od.btn.method">&#8595; Metodologia</a>
+        <a class="btn secondary" href="#gis-sources" data-i18n="od.btn.gis">&#8595; Fonti dati GIS</a>
+        <a class="btn primary" href="webgis-od/index.html" data-i18n="od.btn.map">&#128506; Apri Mappa Flussi OD</a>
+      </div>
+    </div>
+  </main>
+
+  <section class="section">
+    <div class="container article-grid">
+      <div class="article-image"><img src="images/origin-destination.jpg" alt="Flussi origine-destinazione del MOR"></div>
+      <div class="panel article-copy">
+        <p data-i18n="od.p1">La visualizzazione consente di leggere i collegamenti tra i territori di provenienza e quelli di destinazione dei flussi, offrendo una rappresentazione sintetica e animata delle relazioni logistiche della filiera.</p>
+        <p data-i18n="od.p2">Il layer è stato sviluppato come strumento di visualizzazione infografica, utile per interpretare l'organizzazione spaziale dei movimenti dei prodotti nel sistema chiuso del Mercato Ortofrutticolo del Roero. I dati proposti sono derivati dal censimento realizzato nel 2026.</p>
+
+        <div class="method-box" id="methodology">
+          <h3 data-i18n="od.method.title">Metodologia</h3>
+          <p data-i18n="od.method.p1">Per analizzare la distribuzione spaziale dei flussi di approvvigionamento all'interno del sistema del Mercato Ortofrutticolo del Roero, è stata costruita una matrice origine-destinazione (OD) per quantificare le relazioni logistiche tra i produttori e il Mercato Ortofrutticolo della Roero (MOR). Il primo passo ha riguardato la georeferenziazione della localizzazione di ciascun produttore nell'area di studio, utilizzando dati di coordinate per posizionare accuratamente ogni nodo di approvvigionamento sulla mappa.</p>
+          <p data-i18n="od.method.p2">Sia le localizzazioni dei produttori che la rete stradale sono state proiettate in un sistema di riferimento comune WGS 84 / UTM Zona 32N (EPSG:32632), garantendo coerenza geometrica e precisione metrica in tutti gli strati spaziali utilizzati nell'analisi. La rete stradale che copre l'area di studio è stata successivamente integrata nel modello spaziale, servendo come base per il calcolo dei percorsi tra tutti i nodi identificati.</p>
+          <p data-i18n="od.method.p3">Utilizzando il software QGIS, la matrice OD è stata calcolata per due insiemi di relazioni: connessioni produttore-produttore e connessioni produttore-MOR. Per ogni coppia origine-destinazione, è stato calcolato il percorso stradale più breve e valutato in termini di distanza (km) e costo di trasporto stimato per chilometro, producendo una matrice costo-distanza completa. I valori risultanti sono riportati nella tabella sottostante.</p>
+
+          <div class="od-matrix-wrapper">
+            <table class="od-matrix" id="od-matrix">
+              <thead>
+                <tr>
+                  <th>O.D (Km)</th>
+                  <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th><th>P8</th><th>P9</th><th>P10</th><th>P11</th><th>P12</th><th>P13</th><th>3PL</th><th>MOR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>P1</td> <td>0</td><td>21</td><td>61</td><td>5</td> <td>18</td><td>15</td><td>11</td><td>21</td><td>80</td><td>24</td><td>14</td><td>64</td><td>10</td><td>67</td><td>18</td></tr>
+                <tr><td>P2</td> <td>21</td><td>0</td> <td>43</td><td>16</td><td>10</td><td>8</td> <td>10</td><td>7</td> <td>61</td><td>9</td> <td>8</td> <td>45</td><td>11</td><td>48</td><td>8</td></tr>
+                <tr><td>P3</td> <td>61</td><td>43</td><td>0</td> <td>57</td><td>44</td><td>50</td><td>52</td><td>40</td><td>54</td><td>38</td><td>50</td><td>36</td><td>52</td><td>26</td><td>45</td></tr>
+                <tr><td>P4</td> <td>5</td> <td>16</td><td>57</td><td>0</td> <td>13</td><td>10</td><td>6</td> <td>16</td><td>76</td><td>19</td><td>9</td> <td>59</td><td>6</td> <td>63</td><td>13</td></tr>
+                <tr><td>P5</td> <td>18</td><td>10</td><td>44</td><td>13</td><td>0</td> <td>11</td><td>10</td><td>4</td> <td>69</td><td>6</td> <td>10</td><td>53</td><td>9</td> <td>56</td><td>2</td></tr>
+                <tr><td>P6</td> <td>15</td><td>8</td> <td>50</td><td>10</td><td>11</td><td>0</td> <td>5</td> <td>12</td><td>66</td><td>15</td><td>1</td> <td>50</td><td>6</td> <td>54</td><td>9</td></tr>
+                <tr><td>P7</td> <td>11</td><td>10</td><td>52</td><td>6</td> <td>10</td><td>5</td> <td>0</td> <td>11</td><td>70</td><td>14</td><td>4</td> <td>54</td><td>2</td> <td>57</td><td>9</td></tr>
+                <tr><td>P8</td> <td>21</td><td>7</td> <td>40</td><td>16</td><td>4</td> <td>12</td><td>11</td><td>0</td> <td>65</td><td>3</td> <td>10</td><td>49</td><td>12</td><td>52</td><td>5</td></tr>
+                <tr><td>P9</td> <td>80</td><td>61</td><td>54</td><td>76</td><td>69</td><td>66</td><td>70</td><td>65</td><td>0</td> <td>65</td><td>66</td><td>20</td><td>71</td><td>29</td><td>69</td></tr>
+                <tr><td>P10</td><td>24</td><td>9</td> <td>38</td><td>19</td><td>6</td> <td>15</td><td>14</td><td>3</td> <td>65</td><td>0</td> <td>13</td><td>49</td><td>15</td><td>50</td><td>8</td></tr>
+                <tr><td>P11</td><td>14</td><td>8</td> <td>50</td><td>9</td> <td>10</td><td>1</td> <td>4</td> <td>10</td><td>66</td><td>13</td><td>0</td> <td>50</td><td>5</td> <td>54</td><td>8</td></tr>
+                <tr><td>P12</td><td>64</td><td>45</td><td>36</td><td>59</td><td>53</td><td>50</td><td>54</td><td>49</td><td>20</td><td>49</td><td>50</td><td>0</td> <td>55</td><td>13</td><td>53</td></tr>
+                <tr><td>P13</td><td>10</td><td>11</td><td>52</td><td>6</td> <td>9</td> <td>6</td> <td>2</td> <td>12</td><td>71</td><td>15</td><td>5</td> <td>55</td><td>0</td> <td>58</td><td>9</td></tr>
+                <tr><td>3PL</td><td>67</td><td>48</td><td>26</td><td>63</td><td>56</td><td>54</td><td>57</td><td>52</td><td>29</td><td>50</td><td>54</td><td>13</td><td>58</td><td>0</td> <td>56</td></tr>
+                <tr><td>MOR</td><td>18</td><td>8</td> <td>45</td><td>13</td><td>2</td> <td>9</td> <td>9</td> <td>5</td> <td>69</td><td>8</td> <td>8</td> <td>53</td><td>9</td> <td>56</td><td>0</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p data-i18n="od.method.p4">Per supportare l'interpretazione di questi flussi spaziali, è stata sviluppata una visualizzazione cartografica animata. Il movimento di ciascun produttore è rappresentato come un flusso dinamico sulla mappa, con etichette pop-up interattive che mostrano la distanza associata a ciascun percorso specifico. Questa rappresentazione animata migliora la leggibilità degli output della matrice OD, consentendo agli utenti di tracciare intuitivamente l'organizzazione spaziale dei movimenti di prodotti e di valutare il relativo sforzo logistico coinvolto in ciascuna relazione di approvvigionamento.</p>
+          <p data-i18n="od.method.p5">Ogni record di flusso collega un comune di origine, dove il prodotto è stato raccolto, al MOR. I record sono datati e categorizzati per tipo di prodotto e produttore.</p>
+        </div>
+      </div>
+
+      <div class="panel" id="gis-sources">
+        <h2 class="section-title" style="font-size:32px;" data-i18n="gis.title">Fonti dati GIS</h2>
+        <p class="section-intro" style="margin-bottom:0;" data-i18n="gis.intro">Le fonti riportate fanno riferimento ai dataset utilizzati per la costruzione del layer e sono indicate con il relativo anno di riferimento e regime di licenza, ove disponibile.</p>
+        <table class="sources-table">
+          <thead>
+            <tr>
+              <th data-i18n="th.name">Nome dataset</th>
+              <th data-i18n="th.year">Anno di riferimento</th>
+              <th data-i18n="th.source">Fonte</th>
+              <th data-i18n="th.license">Licenza</th>
+              <th data-i18n="th.link">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-i18n="od.data.road">Rete stradale</td>
+              <td>2026</td>
+              <td>Geofabrik</td>
+              <td>—</td>
+              <td><a href="https://download.geofabrik.de/europe/italy.html" target="_blank">download.geofabrik.de</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="od.data.census">Censimento mercato chiuso MOR</td>
+              <td>2026</td>
+              <td>—</td>
+              <td>n/a</td>
+              <td>n/a</td>
+            </tr>
+            <tr>
+              <td data-i18n="od.data.study">Area di studio</td>
+              <td>2026</td>
+              <td>ISTAT</td>
+              <td>—</td>
+              <td><a href="https://www.istat.it/notizia/confini-delle-unita-amministrative-a-fini-statistici-al-1-gennaio-2018-2/" target="_blank">istat.it</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container">Copy rights &copy; 2026 MOR.</div></footer>
+  <script src="lang.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var rows = document.querySelectorAll('#od-matrix tbody tr');
+      rows.forEach(function (row) {
+        var cells = row.querySelectorAll('td:not(:first-child)');
+        cells.forEach(function (td, idx) {
+          var v = parseInt(td.textContent.trim(), 10);
+          var isLastCol = idx === cells.length - 1;
+          if (v === 0) {
+            td.style.background = '#FFD700';
+            td.style.color = '#593922';
+            td.style.fontWeight = '700';
+          } else if (isLastCol) {
+            td.style.background = '#c9a070';
+            td.style.color = '#3d2510';
+          } else {
+            td.style.background = '#f0dfc0';
+            td.style.color = '#593922';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

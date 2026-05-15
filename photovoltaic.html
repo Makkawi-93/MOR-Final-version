@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layer agrifotovoltaico – MOR</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="index.html">
+        <img src="images/logo.png" alt="Logo MOR">
+        <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+      </a>
+      <nav class="nav-links" aria-label="Navigazione principale">
+        <a href="index.html" data-i18n="nav.home">Home</a>
+        <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+        <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+        <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+      </nav>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-hero">
+    <div class="container">
+      <div class="breadcrumbs" data-i18n="pho.breadcrumb">Home / Layer / Agrifotovoltaico</div>
+      <span class="kicker" data-i18n="nav.infolayer">Layer informativo</span>
+      <h1 data-i18n="pho.h1">Layer agrifotovoltaico</h1>
+      <p class="lead" data-i18n="pho.lead">Mappatura territoriale di terreni censiti per analisi localizzative.</p>
+      <p class="support" data-i18n="pho.support">Questo layer raccoglie e visualizza i dati geografici relativi agli elementi considerati nel progetto per analisi territoriali connesse al fotovoltaico.</p>
+      <div class="button-row"><a class="btn primary" href="login.html" data-i18n="pho.btn.map">&#128506; Apri Mappa Fotovoltaico</a></div>
+    </div>
+  </main>
+
+  <section class="section">
+    <div class="container article-grid">
+      <div class="article-image"><img src="images/photovoltaic.png" alt="Layer agrifotovoltaico del Roero"></div>
+      <div class="panel article-copy">
+        <p data-i18n="pho.p1">La consultazione consente di localizzare gli elementi censiti e leggerli nel contesto spaziale del Roero, senza entrare in valutazioni economiche, progettuali o autorizzative.</p>
+        <p data-i18n="pho.p2">Il layer è stato sviluppato come componente informativa e costituisce una base cartografica utile per successive analisi. La resa finale del WebGIS può essere affiancata da un breve paragrafo metodologico che descriva i criteri di selezione, gli attributi visualizzati e l'eventuale distinzione tra terreni, coltivi ed elementi soggetti a vincoli.</p>
+        <div class="note-box" data-i18n="pho.note"><strong>Da completare:</strong> la sezione descrittiva di dati e metodologia può essere raffinata appena hai l'elenco definitivo dei campi effettivamente pubblicati nella mappa.</div>
+      </div>
+      <div class="panel">
+        <h2 class="section-title" style="font-size:32px;" data-i18n="gis.title">Fonti dati GIS</h2>
+        <p class="section-intro" style="margin-bottom:0;" data-i18n="gis.intro">Le fonti riportate fanno riferimento ai dataset utilizzati per la costruzione del layer e sono indicate con il relativo anno di riferimento e regime di licenza, ove disponibile.</p>
+        <table class="sources-table">
+          <thead>
+            <tr>
+              <th data-i18n="th.name">Nome dataset</th>
+              <th data-i18n="th.year">Anno di riferimento</th>
+              <th data-i18n="th.source">Fonte</th>
+              <th data-i18n="th.license">Licenza</th>
+              <th data-i18n="th.link">Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="common.to_complete">Da completare</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><div class="container">Copy rights &copy; 2026 MOR.</div></footer>
+  <script src="lang.js"></script>
+</body>
+</html>

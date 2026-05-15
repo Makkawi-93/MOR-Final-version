@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accesso riservato – MOR</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; background: #fdf8f0; }
+    .login-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px;
+    }
+    .login-box {
+      background: #fff; border: 1px solid var(--mor-line); border-radius: 24px;
+      box-shadow: 0 24px 50px rgba(89,57,34,0.08); padding: 48px 40px; width: 100%; max-width: 420px;
+    }
+    .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+    .login-logo img { height: 48px; width: auto; }
+    .login-logo span { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--mor-brown); }
+    .login-box h1 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--mor-brown); margin: 0 0 6px; }
+    .login-box p.sub { font-size: 14px; color: var(--mor-brown-soft); margin: 0 0 28px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--mor-brown); margin-bottom: 6px; }
+    input[type="email"], input[type="password"] {
+      width: 100%; padding: 11px 14px; border: 1px solid var(--mor-line); border-radius: 10px;
+      font-family: 'Raleway', sans-serif; font-size: 14px; color: var(--mor-brown);
+      background: #fff; outline: none; transition: border-color 0.2s;
+      box-sizing: border-box; margin-bottom: 18px;
+    }
+    input[type="email"]:focus, input[type="password"]:focus { border-color: var(--mor-brown); }
+    .login-btn {
+      width: 100%; padding: 13px; background: var(--mor-brown); color: #fff;
+      border: none; border-radius: 999px; font-family: 'Raleway', sans-serif;
+      font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    .login-btn:hover { background: var(--mor-brown-soft); }
+    .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .error-msg {
+      background: #fde8e8; border: 1px solid #f5bcbc; border-radius: 10px;
+      color: #a33; font-size: 13px; padding: 10px 14px; margin-bottom: 18px; display: none;
+    }
+    .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--mor-brown-soft); }
+    .back-link a { color: var(--mor-brown); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="index.html">
+        <img src="images/logo.png" alt="Logo MOR">
+        <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+      </a>
+    </div>
+  </header>
+
+  <div class="login-wrap">
+    <div class="login-box">
+      <h1>Accesso riservato</h1>
+      <p class="sub">Inserisci le credenziali per accedere alla mappa agrifotovoltaica.</p>
+
+      <div class="error-msg" id="error-msg"></div>
+
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="nome@esempio.it" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+
+        <button class="login-btn" type="submit" id="login-btn">Accedi</button>
+      </form>
+
+      <p class="back-link"><a href="index.html">← Torna alla home</a></p>
+    </div>
+  </div>
+
+  <footer class="footer"><div class="container">Copy rights &copy; 2026 MOR.</div></footer>
+
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ─────────────────────────────────────────────────────
+    // PASTE YOUR SUPABASE CREDENTIALS HERE
+    const SUPABASE_URL      = 'https://wwbramligefejlmwxrka.supabase.co';       // e.g. https://xxxx.supabase.co
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YnJhbWxpZ2VmZWpsbXd4cmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NzA0NzAsImV4cCI6MjA5MDU0NjQ3MH0._r-HAZzGG7r0_bR9rrmeQLB4Er-UL0WO7xElqrlkqc8';  // Project Settings → API → anon key
+    // ─────────────────────────────────────────────────────
+
+    const { createClient } = supabase;
+    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // If already logged in, go straight to the map
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) window.location.href = 'webgis-photovoltaic/index.html';
+    });
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      const errEl = document.getElementById('error-msg');
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      btn.disabled = true;
+      btn.textContent = 'Accesso in corso…';
+      errEl.style.display = 'none';
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errEl.textContent = 'Credenziali non valide. Riprova.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Accedi';
+      } else {
+        window.location.href = 'webgis-photovoltaic/index.html';
+      }
+    }
+  </script>
+  <script src="lang.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Data – MOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #1a1a1a; }
+
+        nav { width:100%; height:64px; background:#fff; border-bottom:1px solid #e0e0e0; display:flex; align-items:center; padding:0 32px; position:sticky; top:0; z-index:1000; gap:16px; }
+        .nav-logo-box { width:48px; height:48px; flex-shrink:0; }
+        .nav-logo-box img { width:100%; height:100%; object-fit:contain; }
+        .nav-brand { display:flex; flex-direction:column; justify-content:center; margin-right:32px; }
+        .nav-brand-name { font-size:12px; font-weight:600; color:#1a1a1a; line-height:1.2; max-width:160px; }
+        .nav-brand-short { font-size:11px; font-weight:700; color:#888; letter-spacing:0.08em; }
+        .nav-links { display:flex; align-items:center; gap:32px; flex:1; }
+        .nav-link { font-size:14px; color:#1a1a1a; text-decoration:none; background:none; border:none; cursor:pointer; font-family:Arial,sans-serif; }
+        .nav-link:hover { text-decoration:underline; }
+        .nav-lang { display:flex; gap:8px; margin-left:auto; }
+        .lang-btn { font-size:14px; color:#1a1a1a; background:none; border:none; cursor:pointer; font-family:Arial,sans-serif; }
+        .lang-btn.active { font-weight:700; }
+
+        .article-wrapper { max-width: 860px; margin: 0 auto; padding: 60px 40px 100px; }
+
+        .breadcrumb { font-size: 13px; color: #888; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: #888; text-decoration: none; }
+        .breadcrumb a:hover { color: #1a1a1a; text-decoration: underline; }
+        .breadcrumb span { color: #ccc; }
+
+        .article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #0e7a5a; background: #e5f7f2; border-radius: 4px; padding: 4px 10px; margin-bottom: 20px; }
+
+        .article-title { font-family: 'Playfair Display', Georgia, serif; font-size: 42px; font-weight: 900; line-height: 1.15; color: #0f1923; margin-bottom: 16px; }
+
+        .article-lead { font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 300; color: #444; line-height: 1.65; margin-bottom: 32px; border-left: 3px solid #0e7a5a; padding-left: 20px; }
+
+        .article-meta { font-size: 12px; color: #aaa; margin-bottom: 40px; display: flex; align-items: center; gap: 16px; }
+        .article-meta-dot { width: 3px; height: 3px; background: #ccc; border-radius: 50%; }
+
+        .article-image-wrap { width: 100%; aspect-ratio: 16/7; background: #cce8df; border-radius: 16px; overflow: hidden; margin-bottom: 48px; position: relative; box-shadow: 0 4px 32px rgba(0,0,0,0.10); }
+        .article-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .article-image-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #0e7a5a; }
+        .article-image-caption { font-size: 12px; color: #aaa; margin-top: -36px; margin-bottom: 48px; text-align: center; font-style: italic; }
+
+        .article-body { font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; line-height: 1.85; color: #2a2a2a; }
+        .article-body p { margin-bottom: 24px; }
+        .article-body h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; color: #0f1923; margin: 48px 0 16px; }
+        .article-body h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; color: #0f1923; margin: 32px 0 12px; }
+        .article-body strong { font-weight: 600; color: #1a1a1a; }
+
+        .pull-quote { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-style: italic; color: #0e7a5a; border-top: 2px solid #0e7a5a; border-bottom: 2px solid #0e7a5a; padding: 24px 0; margin: 40px 0; line-height: 1.5; }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 60px; font-size: 14px; color: #1a1a1a; text-decoration: none; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 20px; transition: background 0.2s; }
+        .back-btn:hover { background: #f5f5f5; }
+
+        [data-lang] { display: none; }
+        body.lang-it [data-lang="it"] { display: inline; }
+        body.lang-en [data-lang="en"] { display: inline; }
+        body.lang-it .lang-it-block { display: block; }
+        body.lang-en .lang-en-block { display: block; }
+        .lang-it-block, .lang-en-block { display: none; }
+
+        footer { background: #593922; padding: 20px 40px; text-align: center; font-size: 13px; margin-top: 60px; color: #ffffff; }
+    </style>
+</head>
+<body class="lang-en">
+
+<header class="site-header">
+  <div class="container navbar">
+    <a class="brand" href="index.html">
+      <img src="images/logo.PNG" alt="Logo MOR">
+      <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+    </a>
+    <nav class="nav-links" aria-label="Navigazione principale">
+      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+      <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+      <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="article-wrapper">
+
+    <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>›</span>
+        <span><span data-lang="it">Dati in Tempo Reale</span><span data-lang="en">Real-Time Data</span></span>
+    </div>
+
+    <div class="article-tag"><span data-lang="it">Dati in Tempo Reale</span><span data-lang="en">Real-Time Data</span></div>
+
+    <h1 class="article-title lang-en-block">Real-Time Data:<br>Live Flows Across Asti and Cuneo</h1>
+    <h1 class="article-title lang-it-block">Dati in Tempo Reale:<br>Flussi in Diretta tra Asti e Cuneo</h1>
+
+    <p class="article-lead lang-en-block">Access up-to-date data flows on production, transport and horticultural markets across Asti and Cuneo. MOR keeps you connected to what is happening in the territory right now.</p>
+    <p class="article-lead lang-it-block">Accedi ai flussi di dati aggiornati su produzione, trasporti e mercati orticoli di Asti e Cuneo. MOR ti mantiene connesso a ciò che accade nel territorio in questo momento.</p>
+
+    <div class="article-meta">
+        <span>MOR Team</span>
+        <span class="article-meta-dot"></span>
+        <span>2025</span>
+        <span class="article-meta-dot"></span>
+        <span><span data-lang="it">5 min di lettura</span><span data-lang="en">5 min read</span></span>
+    </div>
+
+    <!-- HERO IMAGE — place your image at: images/explore-realtime.jpg -->
+    <div class="article-image-wrap">
+        <img src="images/explore-realtime.jpg" alt="Real-Time Data" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="article-image-placeholder">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="20" stroke="#0e7a5a" stroke-width="2.5" fill="none" stroke-dasharray="5 3"/>
+                <circle cx="32" cy="32" r="6" fill="#0e7a5a"/>
+                <line x1="32" y1="8" x2="32" y2="18" stroke="#0e7a5a" stroke-width="2.5"/>
+                <line x1="32" y1="46" x2="32" y2="56" stroke="#0e7a5a" stroke-width="2.5"/>
+                <line x1="8" y1="32" x2="18" y2="32" stroke="#0e7a5a" stroke-width="2.5"/>
+                <line x1="46" y1="32" x2="56" y2="32" stroke="#0e7a5a" stroke-width="2.5"/>
+            </svg>
+            <span style="font-size:13px; font-family:Arial,sans-serif;">Place your image at <strong>images/explore-realtime.jpg</strong></span>
+        </div>
+    </div>
+    <p class="article-image-caption lang-en-block">Live data streams from production and transport networks across the Asti and Cuneo provinces.</p>
+    <p class="article-image-caption lang-it-block">Flussi di dati in diretta dalle reti di produzione e trasporto nelle province di Asti e Cuneo.</p>
+
+    <div class="article-body">
+
+        <div class="lang-en-block">
+            <p>Agricultural markets move fast. Prices shift overnight, harvests arrive earlier or later than expected, and transport delays can cascade across an entire supply chain within hours. In this environment, access to real-time data is not a luxury — it is a basic operational requirement for anyone involved in the production, movement, or sale of horticultural products.</p>
+
+            <p>MOR's real-time data layer was built to meet this need. It aggregates live feeds from multiple sources — GPS sensors on enrolled transport vehicles, market price updates, and production reporting from cooperatives — and presents them in a unified, geographically organized interface that makes the current state of the territory immediately readable.</p>
+
+            <div class="pull-quote">"Data that arrives too late is not information — it is history. MOR is built around the principle that producers deserve to act on what is happening now."</div>
+
+            <h2>What Updates in Real Time</h2>
+            <p>The platform currently tracks three categories of real-time information. <strong>Vehicle positions</strong> — GPS coordinates from enrolled transport vehicles, updated every few minutes, showing the live location of deliveries across the Asti-Cuneo corridor. <strong>Market conditions</strong> — price and availability updates from participating wholesale markets and cooperatives, helping producers and buyers align on current values before committing to transactions. <strong>Production alerts</strong> — notifications from cooperative members about harvest readiness, unexpected yield changes, or quality issues that affect supply.</p>
+
+            <h2>How the Data Is Displayed</h2>
+            <p>All real-time data is displayed as a layer on the MOR interactive map. Vehicle positions appear as moving icons with color coding by product type. Market condition updates appear as municipality-level indicators showing whether current prices are above, at, or below the seasonal average. Production alerts appear as pinned notifications on the relevant farm or cooperative location.</p>
+
+            <h3>Historical Comparison</h3>
+            <p>One of the most valuable features of the real-time layer is the ability to compare current conditions against historical baselines. A delivery that is running 40 minutes late only becomes meaningful when you know whether that delay is typical for this route at this time of year — or whether it signals something unusual that requires attention.</p>
+
+            <p>MOR provides this context automatically, flagging deviations from historical norms and allowing users to drill down into the underlying data to understand the cause. This turns raw real-time data into genuinely actionable intelligence for producers, logistics managers, and market operators.</p>
+
+            <h2>Looking Ahead</h2>
+            <p>Future development of the real-time layer will incorporate weather data integration — connecting forecast conditions directly to production and transport planning — and expand the network of participating cooperatives and market operators to improve coverage across the full Asti-Cuneo territory.</p>
+        </div>
+
+        <div class="lang-it-block">
+            <p>I mercati agricoli si muovono velocemente. I prezzi cambiano durante la notte, i raccolti arrivano prima o dopo il previsto e i ritardi nel trasporto possono propagarsi lungo un'intera filiera nel giro di ore. In questo contesto, l'accesso ai dati in tempo reale non è un lusso — è un requisito operativo di base per chiunque sia coinvolto nella produzione, nel movimento o nella vendita di prodotti orticoli.</p>
+
+            <p>Il layer di dati in tempo reale di MOR è stato costruito per rispondere a questa esigenza. Aggrega flussi in diretta da molteplici fonti — sensori GPS su veicoli di trasporto aderenti, aggiornamenti dei prezzi di mercato e rendicontazione della produzione dalle cooperative — e li presenta in un'interfaccia unificata e geograficamente organizzata.</p>
+
+            <div class="pull-quote">"I dati che arrivano troppo tardi non sono informazioni — sono storia. MOR è costruito sul principio che i produttori meritano di agire su ciò che accade adesso."</div>
+
+            <h2>Cosa si Aggiorna in Tempo Reale</h2>
+            <p>La piattaforma traccia attualmente tre categorie di informazioni in tempo reale. Le <strong>posizioni dei veicoli</strong> — coordinate GPS dai veicoli di trasporto aderenti. Le <strong>condizioni di mercato</strong> — aggiornamenti di prezzi e disponibilità dai mercati all'ingrosso e cooperative partecipanti. Gli <strong>avvisi di produzione</strong> — notifiche dai soci delle cooperative su prontezza del raccolto, variazioni inattese della resa o problemi di qualità.</p>
+
+            <h2>Come Vengono Visualizzati i Dati</h2>
+            <p>Tutti i dati in tempo reale vengono visualizzati come layer sulla mappa interattiva MOR. Le posizioni dei veicoli appaiono come icone in movimento con codice colore per tipo di prodotto. Gli aggiornamenti sulle condizioni di mercato appaiono come indicatori a livello comunale. Gli avvisi di produzione appaiono come notifiche fissate sulla posizione rilevante dell'azienda o cooperativa.</p>
+        </div>
+    </div>
+
+    <a class="back-btn" href="index.html">← <span data-lang="it">Torna alla Home</span><span data-lang="en">Back to Home</span></a>
+</div>
+
+<footer>Copy rights © 2026 MOR.</footer>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(function(b){
+            b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+        });
+    }
+    setLang('en');
+</script>
+</body>
+</html>

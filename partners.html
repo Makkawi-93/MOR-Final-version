@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner – MOR</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .partner-logos {
+      display: flex;
+      gap: 56px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 48px;
+      padding: 48px;
+      border: 1px solid var(--mor-line);
+      border-radius: 24px;
+      background: white;
+      box-shadow: 0 16px 34px rgba(89,57,34,0.06);
+    }
+    .partner-logos img {
+      max-height: 110px;
+      width: auto;
+      max-width: 220px;
+      object-fit: contain;
+      filter: grayscale(20%);
+      transition: filter 0.2s ease, transform 0.2s ease;
+    }
+    .partner-logos img:hover {
+      filter: grayscale(0%);
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="brand" href="index.html">
+        <img src="images/logo.png" alt="Logo MOR">
+        <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+      </a>
+      <nav class="nav-links" aria-label="Navigazione principale">
+        <a href="index.html" data-i18n="nav.home">Home</a>
+        <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+        <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+        <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+      </nav>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-hero">
+    <div class="container">
+      <div class="breadcrumbs" data-i18n="par.breadcrumb">Home / Partner</div>
+      <span class="kicker" data-i18n="par.kicker">I nostri partner</span>
+      <h1 data-i18n="par.title">In collaborazione con il Politecnico di Torino</h1>
+      <div class="partner-logos">
+        <img src="images/P1.png" alt="Partner 1">
+        <img src="images/P2.png" alt="Partner 2">
+        <img src="images/P3.png" alt="Partner 3">
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">Copy rights &copy; 2026 MOR.</div>
+  </footer>
+  <script src="lang.js"></script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 8px 2px; }
+  .container {
+    font-family: 'Raleway', sans-serif;
+    color: #593922;
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+  .card {
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    border-radius: 8px;
+    padding: 22px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .section-h {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: #593922;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: #593922;
+    margin: 0 0 6px;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #E6C165;
+    margin: 0 0 20px;
+    text-align: center;
+  }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #FDFBF7;
+    border: 1px solid #DDDDDD;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 5px;
+    color: #593922;
+  }
+  .stat-card .label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: #684935;
+  }
+  .highlight-km { color: #A45323; }
+  .highlight-tipici { color: #C27223; }
+  .products-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #593922;
+    margin: 0 0 10px;
+  }
+  .product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 14px;
+  }
+  .product-pill {
+    background: #FDFBF7;
+    border: 1px solid #EBD094;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 400;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #593922;
+  }
+  .star { color: #E6C165; font-size: 14px; font-weight: 600; }
+  .km-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #684935;
+    margin-top: 12px;
+  }
+  .km-legend-item { display: flex; align-items: center; gap: 6px; }
+  .km-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .note { font-size: 12px; color: #684935; margin: 0; text-align: center; font-weight: 300; }
+  .chart-wrap { position: relative; width: 100%; flex: 1; min-height: 0; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Left card: info panel -->
+  <div class="card">
+    <h1 class="hero-title">19 prodotti del Roero</h1>
+    <p class="hero-sub">dal campo alla tavola</p>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num">19</div>
+        <div class="label">Prodotti freschi</div>
+      </div>
+      <div class="stat-card">
+        <div class="num highlight-tipici">7</div>
+        <div class="label">Prodotti tipici</div>
+      </div>
+      <div class="stat-card">
+        <div class="num highlight-km">15 km</div>
+        <div class="label">Distanza media</div>
+      </div>
+      <div class="stat-card">
+        <div class="num">30 ton</div>
+        <div class="label">Produzione annua</div>
+      </div>
+    </div>
+
+    <p class="products-title">Prodotti tipici del territorio</p>
+    <div class="product-list">
+      <div class="product-pill"><span class="star">★</span> Pomodoro Cerrato d'Asti</div>
+      <div class="product-pill"><span class="star">★</span> Nocciole Tostate TGT</div>
+      <div class="product-pill"><span class="star">★</span> Pesche Storiche di Canale</div>
+      <div class="product-pill"><span class="star">★</span> Pere Madernassa</div>
+      <div class="product-pill"><span class="star">★</span> Susine Dalmazzine</div>
+    </div>
+    <p class="note">37% della produzione è costituita da varietà tradizionali certificate</p>
+  </div>
+
+  <!-- Middle card: bar chart -->
+  <div class="card">
+    <h2 class="section-h">Chilometri zero — distanza dei produttori dal mercato</h2>
+    <div class="chart-wrap">
+      <canvas id="kmChart" role="img" aria-label="Distribuzione dei produttori per distanza dal mercato.">Produttori per fascia di distanza.</canvas>
+    </div>
+    <div class="km-legend">
+      <div class="km-legend-item"><span class="km-dot" style="background:#A45323"></span>0-10 km (8 produttori, 62% del volume)</div>
+      <div class="km-legend-item"><span class="km-dot" style="background:#C27223"></span>11-20 km (2 produttori, 8% del volume)</div>
+      <div class="km-legend-item"><span class="km-dot" style="background:#E6C165"></span>21-50 km (1 produttore, 11% del volume)</div>
+      <div class="km-legend-item"><span class="km-dot" style="background:#EBD094"></span>51+ km (2 produttori, 19% del volume)</div>
+    </div>
+  </div>
+
+  <!-- Right card: donut chart -->
+  <div class="card">
+    <h2 class="section-h">Composizione per categoria</h2>
+    <div class="chart-wrap">
+      <canvas id="catChart" role="img" aria-label="Composizione per categoria merceologica. Ortaggi 59%, Frutta 13%, Legumi 12%, Pomodoro 8%, Nocciole 4%.">Categorie: Ortaggi 59%, Frutta 13%, Legumi 12%, Pomodoro 8%, Nocciole 4%.</canvas>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const kmBands = [
+  { band: '0-10 km', count: 8, vol: 18392, color: '#A45323' },
+  { band: '11-20 km', count: 2, vol: 2481, color: '#C27223' },
+  { band: '21-50 km', count: 1, vol: 3211, color: '#E6C165' },
+  { band: '51+ km', count: 2, vol: 5713, color: '#EBD094' }
+];
+
+new Chart(document.getElementById('kmChart'), {
+  type: 'bar',
+  data: {
+    labels: kmBands.map(b => b.band),
+    datasets: [{
+      label: 'Numero produttori',
+      data: kmBands.map(b => b.count),
+      backgroundColor: kmBands.map(b => b.color),
+      borderRadius: 4,
+      borderSkipped: false,
+      yAxisID: 'y'
+    }, {
+      label: 'Volume (ton)',
+      data: kmBands.map(b => Math.round(b.vol/100)/10),
+      backgroundColor: kmBands.map(b => b.color + '80'),
+      borderRadius: 4,
+      borderSkipped: false,
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+        labels: {
+          boxWidth: 12,
+          font: { size: 12, family: "'Raleway', sans-serif" },
+          color: '#593922'
+        }
+      },
+      tooltip: {
+        backgroundColor: '#593922',
+        titleFont: { family: "'Raleway', sans-serif" },
+        bodyFont: { family: "'Raleway', sans-serif" },
+        callbacks: {
+          label: ctx => {
+            if(ctx.datasetIndex === 0) return ' ' + ctx.parsed.y + ' produttori';
+            return ' ' + ctx.parsed.y.toFixed(1) + ' ton';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 12, family: "'Raleway', sans-serif" }, color: '#593922' }
+      },
+      y: {
+        type: 'linear',
+        position: 'left',
+        grid: { color: '#E0E0E0' },
+        ticks: {
+          callback: v => v + ' p.',
+          font: { size: 11, family: "'Raleway', sans-serif" },
+          color: '#684935'
+        },
+        max: 10
+      },
+      y1: {
+        type: 'linear',
+        position: 'right',
+        grid: { display: false },
+        ticks: {
+          callback: v => v.toFixed(0) + ' t',
+          font: { size: 11, family: "'Raleway', sans-serif" },
+          color: '#684935'
+        },
+        max: 20
+      }
+    }
+  }
+});
+
+const catData = {
+  labels: ['Ortaggi', 'Frutta', 'Legumi', 'Pomodoro', 'Nocciole'],
+  values: [59, 13, 12, 8, 4],
+  colors: ['#A45323', '#C27223', '#E6C165', '#684935', '#EBD094']
+};
+
+new Chart(document.getElementById('catChart'), {
+  type: 'doughnut',
+  data: {
+    labels: catData.labels,
+    datasets: [{
+      data: catData.values,
+      backgroundColor: catData.colors,
+      borderWidth: 2,
+      borderColor: '#FFFFFF'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          boxWidth: 12,
+          font: { size: 13, family: "'Raleway', sans-serif" },
+          color: '#593922',
+          generateLabels: chart => {
+            const data = chart.data;
+            return data.labels.map((label, i) => ({
+              text: label + ' ' + data.datasets[0].data[i] + '%',
+              fillStyle: data.datasets[0].backgroundColor[i],
+              hidden: false,
+              index: i
+            }));
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: '#593922',
+        titleFont: { family: "'Raleway', sans-serif" },
+        bodyFont: { family: "'Raleway', sans-serif" },
+        callbacks: {
+          label: ctx => ' ' + ctx.label + ': ' + ctx.parsed + '%'
+        }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

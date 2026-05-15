@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Tracking – MOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #ffffff; color: #1a1a1a; }
+
+        nav { width: 100%; height: 56px; background: #fff; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; padding: 0 40px; position: sticky; top: 0; z-index: 1000; }
+        .nav-logo-box { width: 48px; height: 36px; background: #ccc; border-radius: 4px; margin-right: 32px; flex-shrink: 0; }
+        .nav-links { display: flex; align-items: center; gap: 32px; flex: 1; }
+        .nav-link { font-size: 14px; color: #1a1a1a; text-decoration: none; background: none; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .nav-link:hover { text-decoration: underline; }
+        .nav-lang { display: flex; gap: 8px; margin-left: auto; }
+        .lang-btn { font-size: 14px; color: #1a1a1a; background: none; border: none; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .lang-btn.active { font-weight: 700; }
+
+        .article-wrapper { max-width: 860px; margin: 0 auto; padding: 60px 40px 100px; }
+
+        .breadcrumb { font-size: 13px; color: #888; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+        .breadcrumb a { color: #888; text-decoration: none; }
+        .breadcrumb a:hover { color: #1a1a1a; text-decoration: underline; }
+        .breadcrumb span { color: #ccc; }
+
+        .article-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #eba034; background: #f0ebfb; border-radius: 4px; padding: 4px 10px; margin-bottom: 20px; }
+
+        .article-title { font-family: 'Playfair Display', Georgia, serif; font-size: 42px; font-weight: 900; line-height: 1.15; color: #0f1923; margin-bottom: 16px; }
+
+        .article-lead { font-family: 'Source Serif 4', Georgia, serif; font-size: 19px; font-weight: 300; color: #444; line-height: 1.65; margin-bottom: 32px; border-left: 3px solid #eba034; padding-left: 20px; }
+
+        .article-meta { font-size: 12px; color: #aaa; margin-bottom: 40px; display: flex; align-items: center; gap: 16px; }
+        .article-meta-dot { width: 3px; height: 3px; background: #ccc; border-radius: 50%; }
+
+        .article-image-wrap { width: 100%; aspect-ratio: 16/7; background: #e0d5f5; border-radius: 16px; overflow: hidden; margin-bottom: 48px; position: relative; box-shadow: 0 4px 32px rgba(0,0,0,0.10); }
+        .article-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .article-image-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #eba034; }
+        .article-image-caption { font-size: 12px; color: #aaa; margin-top: -36px; margin-bottom: 48px; text-align: center; font-style: italic; }
+
+        .article-body { font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; line-height: 1.85; color: #2a2a2a; }
+        .article-body p { margin-bottom: 24px; }
+        .article-body h2 { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 700; color: #0f1923; margin: 48px 0 16px; }
+        .article-body h3 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; color: #0f1923; margin: 32px 0 12px; }
+        .article-body strong { font-weight: 600; color: #1a1a1a; }
+
+        .pull-quote { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-style: italic; color: #eba034; border-top: 2px solid #eba034; border-bottom: 2px solid #eba034; padding: 24px 0; margin: 40px 0; line-height: 1.5; }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 60px; font-size: 14px; color: #1a1a1a; text-decoration: none; border: 1px solid #e0e0e0; border-radius: 8px; padding: 10px 20px; transition: background 0.2s; }
+        .back-btn:hover { background: #f5f5f5; }
+
+        [data-lang] { display: none; }
+        body.lang-it [data-lang="it"] { display: inline; }
+        body.lang-en [data-lang="en"] { display: inline; }
+        body.lang-it .lang-it-block { display: block; }
+        body.lang-en .lang-en-block { display: block; }
+        .lang-it-block, .lang-en-block { display: none; }
+
+        footer { background: #593922; padding: 20px 40px; text-align: center; font-size: 13px; margin-top: 60px; color: #ffffff; }
+    </style>
+</head>
+<body class="lang-en">
+
+<header class="site-header">
+  <div class="container navbar">
+    <a class="brand" href="index.html">
+      <img src="images/logo.PNG" alt="Logo MOR">
+      <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+    </a>
+    <nav class="nav-links" aria-label="Navigazione principale">
+      <a href="index.html" data-i18n="nav.home">Home</a>
+      <a href="index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+      <a href="index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+      <a href="index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="article-wrapper">
+
+    <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>›</span>
+        <span><span data-lang="it">Funzionalità</span><span data-lang="en">Features</span></span>
+        <span>›</span>
+        <span><span data-lang="it">Tracciamento Veicoli</span><span data-lang="en">Vehicle Tracking</span></span>
+    </div>
+
+    <div class="article-tag"><span data-lang="it">Mobilità in Tempo Reale</span><span data-lang="en">Real-Time Mobility</span></div>
+
+    <h1 class="article-title lang-en-block">Vehicle Tracking:<br>Real-Time Intelligence for Horticultural Transport</h1>
+    <h1 class="article-title lang-it-block">Tracciamento Veicoli:<br>Intelligenza in Tempo Reale per il Trasporto Orticolo</h1>
+
+    <p class="article-lead lang-en-block">Every delivery truck, refrigerated van, and farm vehicle that moves product through the Roero generates data. MOR's vehicle tracking layer turns that data into actionable insight — live GPS routes, delay alerts, and route efficiency analysis.</p>
+    <p class="article-lead lang-it-block">Ogni camion di consegna, furgone refrigerato e veicolo agricolo che trasporta prodotti nel Roero genera dati. Il layer di tracciamento veicoli di MOR trasforma quei dati in insight praticabili — percorsi GPS in diretta, avvisi di ritardo e analisi dell'efficienza dei percorsi.</p>
+
+    <div class="article-meta">
+        <span>MOR Team</span>
+        <span class="article-meta-dot"></span>
+        <span>2025</span>
+        <span class="article-meta-dot"></span>
+        <span><span data-lang="it">6 min di lettura</span><span data-lang="en">6 min read</span></span>
+    </div>
+
+    <!-- HERO IMAGE — replace src with your image: images/vehicle-tracking.jpg -->
+    <div class="article-image-wrap">
+        <img src="images/vehicle-tracking.jpg" alt="Vehicle Tracking" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="article-image-placeholder">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="8" y="28" width="32" height="16" rx="4" fill="#eba034" opacity="0.6"/><rect x="36" y="32" width="14" height="10" rx="3" fill="#eba034" opacity="0.4"/><circle cx="16" cy="46" r="5" fill="#eba034"/><circle cx="42" cy="46" r="5" fill="#eba034"/><path d="M8 32 L16 20 L36 20 L40 28" stroke="#eba034" stroke-width="1.5" fill="none"/><circle cx="52" cy="14" r="6" fill="none" stroke="#eba034" stroke-width="2"/><line x1="56" y1="18" x2="62" y2="24" stroke="#eba034" stroke-width="2"/></svg>
+            <span style="font-size:13px; font-family:Arial,sans-serif;">Place your image at <strong>images/vehicle-tracking.jpg</strong></span>
+        </div>
+    </div>
+    <p class="article-image-caption lang-en-block">GPS-equipped transport vehicles tracked in real time across the Asti-Cuneo corridor.</p>
+    <p class="article-image-caption lang-it-block">Veicoli di trasporto dotati di GPS tracciati in tempo reale lungo il corridoio Asti-Cuneo.</p>
+
+    <div class="article-body">
+
+        <div class="lang-en-block">
+            <p>Agricultural logistics is a time-sensitive, high-stakes operation. Fresh produce has narrow delivery windows. Cold chain breaks cause spoilage. Traffic congestion on rural roads can mean the difference between a product arriving at market in peak condition and arriving too late to sell. Until recently, most of this operational complexity was managed through phone calls, paper records, and experience alone.</p>
+
+            <p>MOR's vehicle tracking layer introduces a new level of visibility to this process. By integrating GPS sensor data from enrolled transport vehicles, the layer provides live positions on the map alongside historical route analysis — revealing where delays most commonly occur, which routes are most efficient by season, and how fleet performance varies across cooperatives and independent operators.</p>
+
+            <div class="pull-quote">"Visibility into the last mile of the supply chain is where the greatest efficiency gains remain uncaptured in Piedmont's agricultural sector."</div>
+
+            <h2>How the Tracking System Works</h2>
+            <p>Participating vehicles are fitted with low-cost IoT sensors that transmit GPS coordinates at regular intervals over the mobile network. The data feeds into MOR's platform, where it is aggregated, anonymized at the operator's discretion, and displayed as live tracks on the interactive map.</p>
+
+            <p>Each track is tagged with the vehicle type (refrigerated, open cargo, specialized), the product category being carried, and the departure and destination points. This allows the system to automatically flag journeys that deviate significantly from the expected route or duration — a potential indicator of breakdown, accident, or diversion.</p>
+
+            <h2>Fleet Efficiency Analysis</h2>
+            <p>Beyond real-time tracking, the layer's most strategically valuable feature is its <strong>historical route analysis</strong>. Over time, the accumulated trip data builds a detailed picture of how the transport network actually functions in practice — as opposed to how it is theoretically supposed to function.</p>
+
+            <p>Patterns that emerge from this analysis include recurring bottlenecks at specific road intersections during morning collection rounds, systematic route inefficiencies caused by suboptimal loading order at farm pickups, and seasonal variations in journey time linked to harvest-period congestion on secondary roads.</p>
+
+            <h3>Privacy and Data Governance</h3>
+            <p>Vehicle tracking raises legitimate questions about worker privacy and commercial confidentiality. MOR's approach gives individual operators full control over how their data is shared: they can contribute to aggregate analysis while keeping their specific routes and timing visible only to themselves. Only anonymized, aggregate patterns are shared at the regional planning level.</p>
+
+            <p>This governance model has been developed in consultation with cooperative managers and transport operators, ensuring that the platform's benefits are available without creating surveillance concerns that would prevent participation.</p>
+
+            <h2>Integration with Origin-Destination Data</h2>
+            <p>The vehicle tracking layer is designed to complement the Origin-Destination Flows layer. While OD flows show aggregate product movement between municipalities, vehicle tracking shows the precise routes and timings of individual journeys — allowing planners to verify whether the theoretical supply chain structure is being executed efficiently on the ground.</p>
+
+            <p>Together, these two layers give MOR users an unprecedented view of Roero's agricultural logistics system: from the broad economic geography of how products move between territories, down to the real-time position of the truck carrying tonight's delivery to market.</p>
+        </div>
+
+        <div class="lang-it-block">
+            <p>La logistica agricola è un'operazione sensibile al tempo e ad alto rischio. I prodotti freschi hanno finestre di consegna strette. Le interruzioni della catena del freddo causano deterioramento. La congestione del traffico sulle strade rurali può fare la differenza tra un prodotto che arriva al mercato in perfette condizioni e uno che arriva troppo tardi per essere venduto.</p>
+
+            <p>Il layer di tracciamento veicoli di MOR introduce un nuovo livello di visibilità in questo processo. Integrando i dati dei sensori GPS dai veicoli di trasporto aderenti, il layer fornisce posizioni in diretta sulla mappa insieme all'analisi storica dei percorsi — rivelando dove i ritardi si verificano più comunemente e quali percorsi sono più efficienti per stagione.</p>
+
+            <div class="pull-quote">"La visibilità sull'ultimo miglio della filiera è dove i maggiori guadagni di efficienza rimangono non catturati nel settore agricolo piemontese."</div>
+
+            <h2>Come Funziona il Sistema di Tracciamento</h2>
+            <p>I veicoli partecipanti sono dotati di sensori IoT a basso costo che trasmettono le coordinate GPS a intervalli regolari sulla rete mobile. I dati confluiscono nella piattaforma MOR, dove vengono aggregati, anonimizzati a discrezione dell'operatore, e visualizzati come tracce in diretta sulla mappa interattiva.</p>
+
+            <p>Ogni traccia è etichettata con il tipo di veicolo (refrigerato, cargo aperto, specializzato), la categoria di prodotto trasportato e i punti di partenza e destinazione. Questo consente al sistema di segnalare automaticamente i viaggi che si discostano significativamente dal percorso o dalla durata previsti.</p>
+
+            <h2>Analisi dell'Efficienza della Flotta</h2>
+            <p>Oltre al tracciamento in tempo reale, la caratteristica più strategicamente preziosa del layer è la sua <strong>analisi storica dei percorsi</strong>. Nel tempo, i dati accumulati costruiscono un quadro dettagliato di come la rete di trasporto funziona effettivamente nella pratica — rispetto a come dovrebbe teoricamente funzionare.</p>
+
+            <p>I pattern che emergono da questa analisi includono colli di bottiglia ricorrenti a specifici incroci stradali durante i giri di raccolta mattutini, inefficienze sistematiche dei percorsi causate da un ordine di carico subottimale nei ritiri in azienda, e variazioni stagionali nei tempi di viaggio legate alla congestione del periodo del raccolto.</p>
+        </div>
+    </div>
+
+    <a class="back-btn" href="index.html">← <span data-lang="it">Torna alla Home</span><span data-lang="en">Back to Home</span></a>
+</div>
+
+<footer>Copy rights © 2026 MOR.</footer>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(function(b){
+            b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+        });
+    }
+    setLang('en');
+</script>
+</body>
+</html>

@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <title>Photovoltaic Suitability Map – MOR</title>
+    <link rel="stylesheet" href="../shared.css">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; font-family: 'Raleway', sans-serif; }
+        #map { position: absolute; top: 86px; left: 340px; right: 320px; bottom: 0; }
+
+        #filter-panel { position: absolute; top: 86px; left: 0; width: 340px; height: calc(100% - 86px); background: #fff; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; z-index: 1000; overflow-y: auto; }
+        #filter-header { padding: 16px 18px 12px; border-bottom: 1px solid #e8e8e8; flex-shrink: 0; }
+        #filter-header h2 { font-size: 13px; font-weight: 700; color: var(--mor-brown); text-transform: uppercase; letter-spacing: 0.08em; }
+        #filter-header p { font-size: 11px; color: var(--mor-brown-soft); margin-top: 4px; }
+
+        .acc-box { border-bottom: 1px solid #e8e8e8; }
+        .acc-header { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+        .acc-header:hover { background: #f5f8ff; }
+        .acc-header.active { background: #f5f5f6; }
+        .acc-title { font-size: 13px; font-weight: 700; color: var(--mor-brown); white-space: nowrap; }
+        .acc-title span { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+        .acc-arrow { font-size: 10px; color: var(--mor-brown-soft); transition: transform 0.2s; }
+        .acc-header.active .acc-arrow { transform: rotate(180deg); }
+        .acc-body { display: none; padding: 8px 18px 14px; background: #f5f5f6; }
+        .acc-body.open { display: block; }
+        .acc-layer-item { font-size: 12px; color: var(--mor-brown-soft); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+        .acc-layer-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+        .layer-eye {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: opacity 0.2s;
+            padding: 0 2px;
+            flex-shrink: 0;
+            color: var(--mor-brown-soft);
+        }
+        .layer-eye.hidden-layer { color: #ccc; text-decoration: line-through; }
+        .layer-eye:hover { color: var(--mor-brown); }
+
+        #back-btn { margin: 14px 18px; padding: 9px 14px; background: var(--mor-brown); color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Raleway', sans-serif; text-align: center; text-decoration: none; display: block; transition: background 0.2s; }
+        #back-btn:hover { background: var(--mor-brown-soft); }
+
+        #legend-panel { position: absolute; top: 86px; right: 0; width: 320px; height: calc(100% - 86px); background: #fff; border-left: 1px solid #e0e0e0; display: flex; flex-direction: column; z-index: 1000; overflow-y: auto; padding: 16px 18px; }
+        #legend-panel h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mor-brown); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e8e8e8; }
+        .legend-empty { font-size: 12px; color: var(--mor-brown-soft); margin-top: 20px; text-align: center; line-height: 1.6; }
+        .legend-group { margin-bottom: 20px; }
+        .legend-group-title { font-size: 12px; font-weight: 700; color: var(--mor-brown); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+        .legend-item { display: flex; align-items: center; gap: 10px; padding: 3px 0; }
+        .legend-swatch { width: 18px; height: 14px; border-radius: 3px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.12); }
+        .legend-label { font-size: 12px; color: var(--mor-brown-soft); }
+
+        .leaflet-tile-pane img { margin: -1px; width: calc(100% + 2px); height: calc(100% + 2px); }
+
+        /* light brown navbar + panels — photovoltaic page only */
+        .site-header { background: #e8d5b0; backdrop-filter: none; border-bottom-color: #d4bfa0; }
+        #filter-panel { background: #fdf8f0 !important; border-right-color: #ead9be; }
+        #legend-panel { background: #fdf8f0 !important; border-left-color: #ead9be; }
+
+        /* user info in navbar */
+        #user-info { display: flex; align-items: center; gap: 10px; margin-left: 16px; padding-left: 16px; border-left: 1px solid #c8a87a; }
+        #user-email { font-size: 12px; font-weight: 600; color: var(--mor-brown); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #logout-btn { padding: 6px 14px; background: var(--mor-brown); color: #fff; border: none; border-radius: 999px; font-family: 'Raleway', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+        #logout-btn:hover { background: var(--mor-brown-soft); }
+    </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="container navbar">
+    <a class="brand" href="../index.html">
+      <img src="../images/logo.PNG" alt="Logo MOR">
+      <div class="brand-title">Mercato Ortofrutticolo del Roero</div>
+    </a>
+    <nav class="nav-links" aria-label="Navigazione principale">
+      <a href="../index.html" data-i18n="nav.home">Home</a>
+      <a href="../index.html#numeri" data-i18n="idx.nav.numbers">Figure</a>
+      <a href="../index.html#features" data-i18n="idx.nav.features">Esplora i layer</a>
+      <a href="../index.html#partners" data-i18n="idx.nav.partners">Partner</a>
+    </nav>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    </div>
+    <div id="user-info">
+      <span id="user-email"></span>
+      <button id="logout-btn" onclick="handleLogout()">&#x2192; Logout</button>
+    </div>
+  </div>
+</header>
+
+<div id="filter-panel">
+    <div id="filter-header">
+        <h2 data-i18n="gis.photo.filter.title">Layer Filter</h2>
+        <p data-i18n="gis.photo.filter.hint">Click a section to toggle layers</p>
+    </div>
+
+    <div class="acc-box" id="box-study">
+        <div class="acc-header" onclick="toggleBox('study')">
+            <div class="acc-title"><span style="background:#d4894a;"></span><span data-i18n="gis.photo.study">Study Area</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-study">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#d28b41cc;"></div><span data-i18n="gis.photo.roero">Roero municipalities</span><button class="layer-eye" id="eye-roero" data-legend-id="leg-roero" onclick="toggleSingleLayer('roero', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#313919cc;"></div><span data-i18n="gis.photo.cuneo">Provincia di Cuneo</span><button class="layer-eye" id="eye-cuneo" data-legend-id="leg-cuneo" onclick="toggleSingleLayer('cuneo', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#f37308cc;"></div><span data-i18n="gis.photo.asti">Provincia di Asti</span><button class="layer-eye" id="eye-asti" data-legend-id="leg-asti" onclick="toggleSingleLayer('asti', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#b7484bcc;"></div><span data-i18n="gis.photo.alessandria">Provincia di Alessandria</span><button class="layer-eye" id="eye-alessandria" data-legend-id="leg-alessandria" onclick="toggleSingleLayer('alessandria', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#d0c0a5cc;"></div><span data-i18n="gis.photo.regione">Regione Piemonte</span><button class="layer-eye" id="eye-regione" data-legend-id="leg-regione" onclick="toggleSingleLayer('regione', this)" title="Toggle layer">&#128065;</button></div>
+        </div>
+    </div>
+
+    <div class="acc-box" id="box-market">
+        <div class="acc-header" onclick="toggleBox('market')">
+            <div class="acc-title"><span style="background:#cc0000;"></span><span data-i18n="gis.photo.market.group">Market Location</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-market">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#cc0000; border-radius:50%;"></div><span data-i18n="gis.photo.market.name">Mercato Ortofrutticolo del Roero</span><button class="layer-eye" id="eye-market" data-legend-id="leg-market" onclick="toggleSingleLayer('market', this)" title="Toggle layer">&#128065;</button></div>
+        </div>
+    </div>
+
+    <div class="acc-box" id="box-exclusion">
+        <div class="acc-header" onclick="toggleBox('exclusion')">
+            <div class="acc-title"><span style="background:#664d48;"></span><span data-i18n="gis.photo.exclusion.group">Exclusion Factors</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-exclusion">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#19dd1c6e;border:1px solid #19dd1c55;"></div><span data-i18n="gis.photo.natura">Rete Natura 2000</span><button class="layer-eye" id="eye-natura" data-legend-id="leg-natura" onclick="toggleSingleLayer('natura', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#db011a7d;border:1px solid #db011a55;"></div><span data-i18n="gis.photo.aree">Aree Protette (EUAP)</span><button class="layer-eye" id="eye-aree" data-legend-id="leg-aree" onclick="toggleSingleLayer('aree', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:repeating-linear-gradient(45deg,#a5480e,#a5480e 2px,transparent 2px,transparent 5px);"></div><span data-i18n="gis.photo.frana">Pericolosità da Frana Elevata</span><button class="layer-eye" id="eye-frana" data-legend-id="leg-frana" onclick="toggleSingleLayer('frana', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:repeating-linear-gradient(135deg,#377eb8,#377eb8 2px,transparent 2px,transparent 5px);"></div><span data-i18n="gis.photo.idraulica">Pericolosità Idraulica Elevata</span><button class="layer-eye" id="eye-idraulica" data-legend-id="leg-idraulica" onclick="toggleSingleLayer('idraulica', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#9bbfff8f;border:1px solid #9bbfff55;"></div><span data-i18n="gis.photo.corpi">Corpi Idrici con Buffer</span><button class="layer-eye" id="eye-corpi" data-legend-id="leg-corpi" onclick="toggleSingleLayer('corpi', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#fff;border:2px solid #000;height:4px;border-radius:0;"></div><span data-i18n="gis.photo.stradale">Rete Stradale</span><button class="layer-eye" id="eye-stradale" data-legend-id="leg-stradale" onclick="toggleSingleLayer('stradale', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#000;height:3px;border-radius:0;"></div><span data-i18n="gis.photo.ferroviaria">Rete Ferroviaria</span><button class="layer-eye" id="eye-ferroviaria" data-legend-id="leg-ferroviaria" onclick="toggleSingleLayer('ferroviaria', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#d28b4159;"></div><span data-i18n="gis.photo.roero">Roero municipalities</span><button class="layer-eye" id="eye-roerocopy" data-legend-id="leg-roerocopy" onclick="toggleSingleLayer('roerocopy', this)" title="Toggle layer">&#128065;</button></div>
+        </div>
+    </div>
+
+    <div class="acc-box" id="box-photo">
+        <div class="acc-header" onclick="toggleBox('photo')">
+            <div class="acc-title"><span style="background:#58c040;"></span><span data-i18n="gis.photo.photo.group">Photovoltaic Suitability</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-photo">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#e84040;"></div><span data-i18n="gis.photo.slope">Slope Analysis</span><button class="layer-eye" id="eye-slope" data-legend-id="leg-slope" onclick="toggleSingleLayer('slope', this)" title="Toggle layer">&#128065;</button></div>
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#f0a830;"></div><span data-i18n="gis.photo.aspect">Aspect Analysis</span><button class="layer-eye" id="eye-aspect" data-legend-id="leg-aspect" onclick="toggleSingleLayer('aspect', this)" title="Toggle layer">&#128065;</button></div>
+        </div>
+    </div>
+
+    <div class="acc-box" id="box-catasto">
+        <div class="acc-header" onclick="toggleBox('catasto')">
+            <div class="acc-title"><span style="background:#8B4513;"></span><span data-i18n="gis.photo.catasto.group">Catasto</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-catasto">
+            <div class="acc-layer-item">
+                <div class="acc-layer-dot" style="background:#8B4513;"></div><span data-i18n="gis.photo.catasto.layer">Originali di Impianto</span>
+                <button class="layer-eye" id="eye-catasto" data-legend-id="leg-catasto" onclick="toggleSingleLayer('catasto',this)">&#128065;</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="acc-box" id="box-lcp">
+        <div class="acc-header" onclick="toggleBox('lcp')">
+            <div class="acc-title"><span style="background:#4a7c3f;"></span><span data-i18n="gis.photo.lcp.group">Land Cover</span></div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-lcp">
+            <div class="acc-layer-item">
+                <div class="acc-layer-dot" style="background:#4a7c3f;"></div><span data-i18n="gis.photo.lcp.layer">Land Cover Piemonte 2021</span>
+                <button class="layer-eye" id="eye-lcp" data-legend-id="leg-lcp" onclick="toggleSingleLayer('lcp',this)">&#128065;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOX: CATASTO INSPIRE (Agenzia delle Entrate) -->
+    <div class="acc-box" id="box-inspire">
+        <div class="acc-header" onclick="toggleBox('inspire')">
+            <div class="acc-title"><span style="background:#2c6fa8;"></span>Catasto INSPIRE</div>
+            <div class="acc-arrow">&#9660;</div>
+        </div>
+        <div class="acc-body" id="body-inspire">
+            <div class="acc-layer-item">
+                <div class="acc-layer-dot" style="background:#2c6fa8;"></div><span>Parcelle</span>
+                <button class="layer-eye" id="eye-parcelle" data-legend-id="leg-parcelle" onclick="toggleSingleLayer('parcelle',this)">&#128065;</button>
+            </div>
+            <div class="acc-layer-item">
+                <div class="acc-layer-dot" style="background:#7b4fa8;"></div><span>Vestizioni</span>
+                <button class="layer-eye" id="eye-vestizioni" data-legend-id="leg-vestizioni" onclick="toggleSingleLayer('vestizioni',this)">&#128065;</button>
+            </div>
+            <div class="acc-layer-item">
+                <div class="acc-layer-dot" style="background:#a84f4f;"></div><span>Fabbricati</span>
+                <button class="layer-eye" id="eye-fabbricati" data-legend-id="leg-fabbricati" onclick="toggleSingleLayer('fabbricati',this)">&#128065;</button>
+            </div>
+        </div>
+    </div>
+
+    <a id="back-btn" href="javascript:history.back()" data-i18n="gis.photo.back">&#8592; Back</a>
+</div>
+
+<div id="map"></div>
+
+<div id="legend-panel">
+    <h3 data-i18n="gis.photo.legend.title">Legend</h3>
+    <div id="legend-content">
+        <p class="legend-empty" data-i18n="gis.photo.legend.empty">Select a layer group on the left to see the legend.</p>
+    </div>
+</div>
+
+<script src="js/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/proj4leaflet@1.0.2/src/proj4leaflet.js"></script>
+<script src="js/leaflet-svg-shape-markers.min.js"></script>
+<script src="js/leaflet.rotatedMarker.js"></script>
+<script src="js/leaflet.pattern.js"></script>
+<script src="js/Autolinker.min.js"></script>
+<script src="js/labelgun.min.js"></script>
+<script src="js/labels.js"></script>
+<script src="js/multi-style-layer.js"></script>
+<script src="js/qgis2web_expressions.js"></script>
+<script src="data/roerocopy_3.js"></script>
+<script src="data/rete_ferroviaria_4.js"></script>
+<script src="data/rete_stradale_5.js"></script>
+<script src="data/corpi_idrici_con_zona_di_buffer_6.js"></script>
+<script src="data/pericolosit_idraulica_elevata_7.js"></script>
+<script src="data/pericolosit_da_frana_elevata_8.js"></script>
+<script src="data/attivit_a_tutela_della_biodiversit_aree_protette_iscritte_allelenco_ufficiale_aree_protette_euap__9.js"></script>
+<script src="data/attivit_a_tutela_della_biodiversit_rete_natura_2000__10.js"></script>
+<script src="data/regione_piemonte_11.js"></script>
+<script src="data/provincia_di_alessandria_12.js"></script>
+<script src="data/provincia_di_asti_13.js"></script>
+<script src="data/provincia_di_cuneo_14.js"></script>
+<script src="data/roero_15.js"></script>
+<script src="data/mercato_ortofrutticolo_del_roero_16.js"></script>
+
+<script>
+var map = L.map('map', { zoomControl:true, maxZoom:28, minZoom:1 }).fitBounds([[44.3,7.2],[45.1,9.0]]);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>', subdomains:'abcd', maxZoom:28 }).addTo(map);
+
+var pattern_frana = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#a5480e',angle:45,opacity:1});
+var pattern_idraulica = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#377eb8',angle:135,opacity:1});
+pattern_frana.addTo(map);
+pattern_idraulica.addTo(map);
+
+var autolinker = new Autolinker({truncate:{length:30,location:'smart'}});
+var highlightLayer;
+function highlightFeature(e) {
+    highlightLayer = e.target;
+    var t = e.target.feature.geometry.type;
+    if(t==='LineString'||t==='MultiLineString') highlightLayer.setStyle({color:'#ffff00'});
+    else highlightLayer.setStyle({fillColor:'#ffff00',fillOpacity:1});
+    highlightLayer.openPopup();
+}
+function onMouseout(e) {
+    for(var i in e.target._eventParents) if(typeof e.target._eventParents[i].resetStyle==='function') e.target._eventParents[i].resetStyle(e.target);
+    if(typeof e.target.closePopup==='function') e.target.closePopup();
+}
+function makePopup(props) {
+    var html='<table>';
+    for(var k in props) if(props[k]!=null) html+='<tr><th>'+k+'</th><td>'+autolinker.link(String(props[k]))+'</td></tr>';
+    return html+'</table>';
+}
+function evts(l){ l.on({mouseout:onMouseout,mouseover:highlightFeature}); }
+
+// Raster
+var layer_Slopeanalysis_1  = L.imageOverlay('data/Slopeanalysis_1.png',  [[44.6644981023804,7.722287223407069],[44.868632262264825,8.13938266589023]]);
+var layer_Aspectanalysis_2 = L.imageOverlay('data/Aspectanalysis_2.png', [[44.6644981023804,7.722287223407069],[44.868632262264825,8.13938266589023]]);
+
+// Vector
+var layer_roerocopy_3 = L.geoJson(json_roerocopy_3,{style:function(){return{color:'#232323',weight:1,fillColor:'#d28b41',fillOpacity:0.35};},onEachFeature:function(f,l){evts(l);l.bindPopup(makePopup(f.properties));}});
+var layer_rete_ferroviaria_4 = L.geoJson(json_rete_ferroviaria_4,{style:function(){return{color:'#000000',weight:2};}});
+var layer_rete_stradale_5_bg = L.geoJson(json_rete_stradale_5,{style:function(){return{color:'#000000',weight:3,fill:false};}});
+var layer_rete_stradale_5 = L.geoJson(json_rete_stradale_5,{style:function(){return{color:'#ffffff',weight:1.5,fill:false};}});
+var layer_corpi_idrici_con_zona_di_buffer_6 = L.geoJson(json_corpi_idrici_con_zona_di_buffer_6,{style:function(){return{stroke:false,fillColor:'#9bbfff',fillOpacity:0.56};}});
+var layer_pericolosit_idraulica_elevata_7 = L.geoJson(json_pericolosit_idraulica_elevata_7,{style:function(){return{fillPattern:pattern_idraulica,fillOpacity:1,stroke:false};}});
+var layer_pericolosit_da_frana_elevata_8 = L.geoJson(json_pericolosit_da_frana_elevata_8,{style:function(){return{fillPattern:pattern_frana,fillOpacity:1,stroke:false};}});
+var layer_aree_protette_9 = L.geoJson(json_attivit_a_tutela_della_biodiversit_aree_protette_iscritte_allelenco_ufficiale_aree_protette_euap__9,{style:function(){return{stroke:false,fillColor:'#db011a',fillOpacity:0.49};}});
+var layer_rete_natura_10 = L.geoJson(json_attivit_a_tutela_della_biodiversit_rete_natura_2000__10,{style:function(){return{stroke:false,fillColor:'#19dd1c',fillOpacity:0.43};}});
+var layer_regione_piemonte_11 = L.geoJson(json_regione_piemonte_11,{style:function(){return{color:'#232323',weight:1,fillColor:'#d0c0a5',fillOpacity:0.5};}});
+var layer_provincia_di_alessandria_12 = L.geoJson(json_provincia_di_alessandria_12,{style:function(){return{color:'#232323',weight:1,fillColor:'#b7484b',fillOpacity:0.6};},onEachFeature:function(f,l){l.bindTooltip(f.properties['DEN_PROV']||'',{permanent:true,offset:[0,-16]});}});
+var layer_provincia_di_asti_13 = L.geoJson(json_provincia_di_asti_13,{style:function(){return{color:'#232323',weight:1,fillColor:'#f37308',fillOpacity:0.6};},onEachFeature:function(f,l){l.bindTooltip(f.properties['DEN_PROV']||'',{permanent:true,offset:[0,-16]});}});
+var layer_provincia_di_cuneo_14 = L.geoJson(json_provincia_di_cuneo_14,{style:function(){return{color:'#232323',weight:1,fillColor:'#313919',fillOpacity:0.6};},onEachFeature:function(f,l){l.bindTooltip(f.properties['DEN_PROV']||'',{permanent:true,offset:[0,-16]});}});
+var layer_roero_15 = L.geoJson(json_roero_15,{style:function(){return{color:'#232323',weight:1,fillColor:'#d28b41',fillOpacity:0.7};}});
+var layer_mercato_16 = L.geoJson(json_mercato_ortofrutticolo_del_roero_16,{pointToLayer:function(f,ll){return L.circleMarker(ll,{radius:8,color:'#b80808',weight:2,fillColor:'#dc1414',fillOpacity:0.9});},onEachFeature:function(f,l){l.bindPopup(makePopup(f.properties));}});
+
+// ── WMS LAYER — Catasto Originali di Impianto ──
+var layer_wms_catasto = L.tileLayer.wms('https://wmtscatasto-gis.csi.it/mapproxy/service?', {
+    layers: 'regp_catasto_oi',
+    format: 'image/png',
+    transparent: true,
+    version: '1.3.0',
+    attribution: '© Regione Piemonte — Catasto Originali di Impianto',
+    opacity: 0.8,
+    tileSize: 512,
+    detectRetina: true,
+    crossOrigin: true,
+    className: 'wms-no-gap'
+});
+
+// ── EPSG:25832 for Agenzia delle Entrate WMS (UTM zone 32N — covers Roero area) ──
+proj4.defs('EPSG:25832', '+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs');
+var crs25832 = new L.Proj.CRS('EPSG:25832', '+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs');
+
+// ── WMS LAYERS — Catasto INSPIRE (Agenzia delle Entrate) ──
+var wmsInspireUrl = 'https://wms.cartografia.agenziaentrate.gov.it/inspire/wms/ows01.php';
+var wmsInspireOpts = { format: 'image/png', transparent: true, version: '1.1.1', crs: crs25832, opacity: 0.7, attribution: '' };
+
+var layer_wms_parcelle   = L.tileLayer.wms(wmsInspireUrl, Object.assign({}, wmsInspireOpts, { layers: 'CP.CadastralParcel' }));
+var layer_wms_vestizioni = L.tileLayer.wms(wmsInspireUrl, Object.assign({}, wmsInspireOpts, { layers: 'vestizioni' }));
+var layer_wms_fabbricati = L.tileLayer.wms(wmsInspireUrl, Object.assign({}, wmsInspireOpts, { layers: 'fabbricati' }));
+
+// ── RASTER LAYER — Land Cover Piemonte 2021 (PCL.png from QGIS export) ──
+map.createPane('pane_lcp');
+map.getPane('pane_lcp').style.zIndex = 401;
+var layer_wms_lcp = L.imageOverlay('data/PCL.png',
+    [[44.664521493137876, 7.722288030609437], [44.868610648586056, 8.139382647713806]],
+    {pane: 'pane_lcp', opacity: 0.8}
+);
+
+// Groups
+var groups = {
+    study:     [layer_regione_piemonte_11, layer_provincia_di_alessandria_12, layer_provincia_di_asti_13, layer_provincia_di_cuneo_14, layer_roero_15],
+    market:    [layer_mercato_16],
+    exclusion: [layer_roerocopy_3, layer_corpi_idrici_con_zona_di_buffer_6, layer_rete_natura_10, layer_aree_protette_9, layer_pericolosit_da_frana_elevata_8, layer_pericolosit_idraulica_elevata_7, layer_rete_stradale_5_bg, layer_rete_stradale_5, layer_rete_ferroviaria_4],
+    photo:     [layer_Slopeanalysis_1, layer_Aspectanalysis_2],
+    catasto:   [layer_wms_catasto],
+    lcp:       [layer_wms_lcp],
+    inspire:   [layer_wms_parcelle, layer_wms_vestizioni, layer_wms_fabbricati]
+};
+var active = {study:false, market:false, exclusion:false, photo:false, catasto:false, lcp:false, inspire:false};
+
+var legends = {
+    study:`<div class="legend-group"><div class="legend-group-title" data-i18n="gis.photo.study">Study Area</div>
+        <div class="legend-item" id="leg-roero"><div class="legend-swatch" style="background:#d28b41b3"></div><span class="legend-label" data-i18n="gis.photo.roero">Roero municipalities</span></div>
+        <div class="legend-item" id="leg-cuneo"><div class="legend-swatch" style="background:#31391999"></div><span class="legend-label" data-i18n="gis.photo.cuneo">Provincia di Cuneo</span></div>
+        <div class="legend-item" id="leg-asti"><div class="legend-swatch" style="background:#f3730899"></div><span class="legend-label" data-i18n="gis.photo.asti">Provincia di Asti</span></div>
+        <div class="legend-item" id="leg-alessandria"><div class="legend-swatch" style="background:#b7484b99"></div><span class="legend-label" data-i18n="gis.photo.alessandria">Provincia di Alessandria</span></div>
+        <div class="legend-item" id="leg-regione"><div class="legend-swatch" style="background:#d0c0a580"></div><span class="legend-label" data-i18n="gis.photo.regione">Regione Piemonte</span></div></div>`,
+    market:`<div class="legend-group"><div class="legend-group-title" data-i18n="gis.photo.market.group">Market Location</div>
+        <div class="legend-item" id="leg-market"><div class="legend-swatch" style="background:#dc1414e6;border-radius:50%"></div><span class="legend-label" data-i18n="gis.photo.market.name">Mercato Ortofrutticolo del Roero</span></div></div>`,
+    exclusion:`<div class="legend-group"><div class="legend-group-title" data-i18n="gis.photo.exclusion.group">Exclusion Factors</div>
+        <div class="legend-item" id="leg-natura"><div class="legend-swatch" style="background:#19dd1c6e;border-color:transparent"></div><span class="legend-label" data-i18n="gis.photo.natura">Rete Natura 2000</span></div>
+        <div class="legend-item" id="leg-aree"><div class="legend-swatch" style="background:#db011a7d;border-color:transparent"></div><span class="legend-label" data-i18n="gis.photo.aree">Aree Protette (EUAP)</span></div>
+        <div class="legend-item" id="leg-frana"><div class="legend-swatch" style="background:repeating-linear-gradient(45deg,#a5480e,#a5480e 2px,transparent 2px,transparent 6px);border-color:transparent"></div><span class="legend-label" data-i18n="gis.photo.frana">Pericolosità da Frana Elevata</span></div>
+        <div class="legend-item" id="leg-idraulica"><div class="legend-swatch" style="background:repeating-linear-gradient(135deg,#377eb8,#377eb8 2px,transparent 2px,transparent 6px);border-color:transparent"></div><span class="legend-label" data-i18n="gis.photo.idraulica">Pericolosità Idraulica Elevata</span></div>
+        <div class="legend-item" id="leg-corpi"><div class="legend-swatch" style="background:#9bbfff8f;border-color:transparent"></div><span class="legend-label" data-i18n="gis.photo.corpi">Corpi Idrici con Buffer</span></div>
+        <div class="legend-item" id="leg-stradale"><div class="legend-swatch" style="background:#fff;border:3px solid #000;height:4px;border-radius:0;padding:0"></div><span class="legend-label" data-i18n="gis.photo.stradale">Rete Stradale</span></div>
+        <div class="legend-item" id="leg-ferroviaria"><div class="legend-swatch" style="background:#000;height:4px;border-radius:0;border:none"></div><span class="legend-label" data-i18n="gis.photo.ferroviaria">Rete Ferroviaria</span></div>
+        <div class="legend-item" id="leg-roerocopy"><div class="legend-swatch" style="background:#d28b4159"></div><span class="legend-label" data-i18n="gis.photo.roero">Roero municipalities</span></div></div>`,
+    photo:`<div class="legend-group" id="leg-slope"><div class="legend-group-title" data-i18n="gis.photo.slope">Slope Analysis</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#e84040"></div><span class="legend-label" data-i18n="gis.photo.suit.none">Non adatto</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f08030"></div><span class="legend-label" data-i18n="gis.photo.suit.vlow">Idoneità molto bassa</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f0d030"></div><span class="legend-label" data-i18n="gis.photo.suit.low">Idoneità bassa</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#a8d840"></div><span class="legend-label" data-i18n="gis.photo.suit.mod">Idoneità moderata</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#58c040"></div><span class="legend-label" data-i18n="gis.photo.suit.high">Idoneità elevata</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#208820"></div><span class="legend-label" data-i18n="gis.photo.suit.vhigh">Idoneità molto elevata</span></div></div>
+        <div class="legend-group" id="leg-aspect"><div class="legend-group-title" data-i18n="gis.photo.aspect">Aspect Analysis</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#e84040"></div><span class="legend-label" data-i18n="gis.photo.suit.none">Non adatto</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f08030"></div><span class="legend-label" data-i18n="gis.photo.suit.vlow">Idoneità molto bassa</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#f0d030"></div><span class="legend-label" data-i18n="gis.photo.suit.low">Idoneità bassa</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#a8d840"></div><span class="legend-label" data-i18n="gis.photo.suit.mod">Idoneità moderata</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#58c040"></div><span class="legend-label" data-i18n="gis.photo.suit.high">Idoneità elevata</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#208820"></div><span class="legend-label" data-i18n="gis.photo.suit.vhigh">Idoneità molto elevata</span></div></div>`,
+    catasto:'<div class="legend-group"><div class="legend-group-title" data-i18n="gis.photo.catasto.group">Catasto</div>' +
+        '<div class="legend-item" id="leg-catasto"><div class="legend-swatch" style="background:#8B4513;opacity:0.8"></div>' +
+        '<span class="legend-label" data-i18n="gis.photo.catasto.layer">Originali di Impianto</span></div></div>',
+    lcp: '<div class="legend-group"><div class="legend-group-title" data-i18n="gis.photo.lcp.layer">Land Cover Piemonte 2021</div>' +
+        '<div class="legend-item"><img src="../images/lcp_legend.png" style="width:100%;height:auto;margin-top:6px;" alt="LCP Legend"></div>' +
+        '</div>',
+    inspire: '<div class="legend-group"><div class="legend-group-title">Catasto INSPIRE</div>' +
+        '<div class="legend-item" id="leg-parcelle"><div class="legend-swatch" style="background:#2c6fa8;opacity:0.6"></div><span class="legend-label">Parcelle</span></div>' +
+        '<div class="legend-item" id="leg-vestizioni"><div class="legend-swatch" style="background:#7b4fa8;opacity:0.6"></div><span class="legend-label">Vestizioni</span></div>' +
+        '<div class="legend-item" id="leg-fabbricati"><div class="legend-swatch" style="background:#a84f4f;opacity:0.6"></div><span class="legend-label">Fabbricati</span></div>' +
+        '</div>'
+};
+
+var singleLayerMap = {
+    'roero': layer_roero_15,
+    'cuneo': layer_provincia_di_cuneo_14,
+    'asti': layer_provincia_di_asti_13,
+    'alessandria': layer_provincia_di_alessandria_12,
+    'regione': layer_regione_piemonte_11,
+    'market': layer_mercato_16,
+    'natura': layer_rete_natura_10,
+    'aree': layer_aree_protette_9,
+    'frana': layer_pericolosit_da_frana_elevata_8,
+    'idraulica': layer_pericolosit_idraulica_elevata_7,
+    'corpi': layer_corpi_idrici_con_zona_di_buffer_6,
+    'stradale': [layer_rete_stradale_5_bg, layer_rete_stradale_5],
+    'ferroviaria': layer_rete_ferroviaria_4,
+    'roerocopy': layer_roerocopy_3,
+    'slope': layer_Slopeanalysis_1,
+    'aspect': layer_Aspectanalysis_2,
+    'catasto': layer_wms_catasto,
+    'lcp': layer_wms_lcp,
+    'parcelle': layer_wms_parcelle,
+    'vestizioni': layer_wms_vestizioni,
+    'fabbricati': layer_wms_fabbricati
+};
+
+var layerToGroup = {
+    'roero': 'study',
+    'cuneo': 'study',
+    'asti': 'study',
+    'alessandria': 'study',
+    'regione': 'study',
+    'market': 'market',
+    'natura': 'exclusion',
+    'aree': 'exclusion',
+    'frana': 'exclusion',
+    'idraulica': 'exclusion',
+    'corpi': 'exclusion',
+    'stradale': 'exclusion',
+    'ferroviaria': 'exclusion',
+    'roerocopy': 'exclusion',
+    'slope': 'photo',
+    'aspect': 'photo',
+    'catasto': 'catasto',
+    'lcp': 'lcp',
+    'parcelle': 'inspire',
+    'vestizioni': 'inspire',
+    'fabbricati': 'inspire'
+};
+
+var groupEyes = {
+    study: ['eye-roero', 'eye-cuneo', 'eye-asti', 'eye-alessandria', 'eye-regione'],
+    market: ['eye-market'],
+    exclusion: ['eye-natura', 'eye-aree', 'eye-frana', 'eye-idraulica', 'eye-corpi', 'eye-stradale', 'eye-ferroviaria', 'eye-roerocopy'],
+    photo: ['eye-slope', 'eye-aspect'],
+    catasto: ['eye-catasto'],
+    lcp: ['eye-lcp'],
+    inspire: ['eye-parcelle', 'eye-vestizioni', 'eye-fabbricati']
+};
+
+function toggleSingleLayer(id, btn) {
+    var group = layerToGroup[id];
+    if (!active[group]) return;
+    var layer = singleLayerMap[id];
+    if (!layer) return;
+    var layers = Array.isArray(layer) ? layer : [layer];
+    var legendId = btn.getAttribute('data-legend-id');
+    if (map.hasLayer(layers[0])) {
+        layers.forEach(function(l){ map.removeLayer(l); });
+        btn.classList.add('hidden-layer');
+        btn.innerHTML = '&#128683;';
+        if (legendId) {
+            var legEl = document.getElementById(legendId);
+            if (legEl) legEl.style.display = 'none';
+        }
+    } else {
+        layers.forEach(function(l){ map.addLayer(l); });
+        btn.classList.remove('hidden-layer');
+        btn.innerHTML = '&#128065;';
+        if (legendId) {
+            var legEl = document.getElementById(legendId);
+            if (legEl) legEl.style.display = '';
+        }
+    }
+}
+
+function toggleBox(id) {
+    var header = document.querySelector('#box-'+id+' .acc-header');
+    var body   = document.getElementById('body-'+id);
+    if (active[id]) {
+        groups[id].forEach(function(l){ if(map.hasLayer(l)) map.removeLayer(l); });
+        active[id]=false; header.classList.remove('active'); body.classList.remove('open');
+        groupEyes[id].forEach(function(eid){
+            var eye = document.getElementById(eid);
+            if (eye) {
+                eye.classList.remove('hidden-layer');
+                eye.innerHTML = '&#128065;';
+                var legendId = eye.getAttribute('data-legend-id');
+                if (legendId) {
+                    var legEl = document.getElementById(legendId);
+                    if (legEl) legEl.style.display = '';
+                }
+            }
+        });
+    } else {
+        groups[id].forEach(function(l){ if(!map.hasLayer(l)) map.addLayer(l); });
+        active[id]=true; header.classList.add('active'); body.classList.add('open');
+        groupEyes[id].forEach(function(eid){
+            var eye = document.getElementById(eid);
+            if (eye) {
+                eye.classList.remove('hidden-layer');
+                eye.innerHTML = '&#128065;';
+                var legendId = eye.getAttribute('data-legend-id');
+                if (legendId) {
+                    var legEl = document.getElementById(legendId);
+                    if (legEl) legEl.style.display = '';
+                }
+            }
+        });
+    }
+    updateLegend();
+}
+
+function updateLegend() {
+    var html='';
+    ['study','market','exclusion','photo','catasto','lcp','inspire'].forEach(function(id){ if(active[id]) html+=legends[id]; });
+    document.getElementById('legend-content').innerHTML = html || '<p class="legend-empty" data-i18n="gis.photo.legend.empty">Select a layer group on the left to see the legend.</p>';
+    if (window.setLang) window.setLang(document.documentElement.lang || localStorage.getItem('mor-lang') || 'it');
+}
+
+setTimeout(function(){ map.invalidateSize(); }, 100);
+</script>
+
+<!-- Supabase auth guard -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ─────────────────────────────────────────────────────
+  // PASTE YOUR SUPABASE CREDENTIALS HERE (same values as in login.html)
+  const SUPABASE_URL      = 'https://wwbramligefejlmwxrka.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YnJhbWxpZ2VmZWpsbXd4cmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NzA0NzAsImV4cCI6MjA5MDU0NjQ3MH0._r-HAZzGG7r0_bR9rrmeQLB4Er-UL0WO7xElqrlkqc8';
+  // ─────────────────────────────────────────────────────
+
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  sb.auth.getSession().then(function({ data }) {
+    if (!data.session) {
+      window.location.href = '../login.html';
+    } else {
+      document.getElementById('user-email').textContent = data.session.user.email;
+    }
+  });
+
+  async function handleLogout() {
+    await sb.auth.signOut();
+    window.location.href = '../login.html';
+  }
+</script>
+
+<script src="../lang.js"></script>
+</body>
+</html>
