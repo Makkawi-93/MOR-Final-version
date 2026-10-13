@@ -120,6 +120,15 @@
   .km-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .note { font-size: 12px; color: #684935; margin: 0; text-align: center; font-weight: 300; }
   .chart-wrap { position: relative; width: 100%; flex: 1; min-height: 0; }
+
+  /* phones / narrow frames: stack the three cards */
+  @media (max-width: 760px) {
+    .container { flex-direction: column; gap: 12px; }
+    .card { padding: 18px; }
+    .chart-wrap { flex: none; height: 260px; }
+    .hero-title { font-size: 22px; }
+    .stat-card .num { font-size: 24px; }
+  }
   </style>
 </head>
 <body>
@@ -320,6 +329,21 @@ new Chart(document.getElementById('catChart'), {
     }
   }
 });
+
+// Tell the parent page (index.html) how tall this infographic is,
+// so the iframe grows when the cards stack on phones.
+(function () {
+  if (window.parent === window) return;
+  var last = 0;
+  function report() {
+    var h = document.body.offsetHeight;
+    if (Math.abs(h - last) > 2) { last = h; window.parent.postMessage({ morFrameHeight: h }, '*'); }
+  }
+  window.addEventListener('load', report);
+  window.addEventListener('resize', report);
+  if (window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  report();
+})();
 </script>
 
 </body>

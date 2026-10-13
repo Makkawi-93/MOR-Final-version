@@ -1,0 +1,181 @@
+/* ─────────────────────────────────────────────────────────────
+   MOR – mobile / small-screen layer
+   Loaded LAST on every page (after page <style> blocks) so it can
+   override page-specific desktop rules. Desktop is untouched: every
+   layout rule lives inside a max-width media query.
+   ───────────────────────────────────────────────────────────── */
+
+/* Header nav: neutralise the generic `nav { … }` rule used on the
+   article pages, which otherwise styles the header's link bar too. */
+.site-header nav.nav-links {
+  width: auto; height: auto; padding: 0; background: none; border: 0;
+  position: static;
+}
+/* Article pages hide every [data-lang] element by default, which also
+   hid one of the IT/EN buttons. Keep both visible. */
+.lang-switcher .lang-btn[data-lang] { display: inline-block; }
+
+/* Hamburger button (injected by mobile.js) — hidden on desktop */
+.nav-toggle { display: none; }
+
+/* Map-page buttons (injected by mobile.js) — hidden on desktop */
+.gis-mobile-bar, .gis-backdrop { display: none; }
+
+/* ═════════════ Tablets and phones ═════════════ */
+@media (max-width: 860px) {
+
+  /* ── Header ─────────────────────────────── */
+  .site-header { z-index: 1500; }
+  .container.navbar,
+  .navbar {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+  .brand img { height: 42px; }
+  .brand-title { display: none; }
+  .container.navbar .lang-switcher,
+  .lang-switcher { margin-left: auto; padding-left: 0; border-left: 0; }
+  .container.navbar .lang-btn { padding: 6px 12px; }
+
+  .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; flex-shrink: 0;
+    border: 1px solid var(--mor-brown); border-radius: 10px;
+    background: #fff; color: var(--mor-brown);
+    font-size: 22px; line-height: 1; cursor: pointer; padding: 0;
+  }
+  html.nav-open .nav-toggle { background: var(--mor-brown); color: #fff; }
+
+  /* Links become a drop-down panel under the header */
+  .site-header nav.nav-links,
+  .container.navbar .nav-links {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0;
+    margin: 0; padding: 12px 16px 16px;
+    flex-direction: column; align-items: stretch; gap: 8px;
+    background: #fff;
+    border-bottom: 1px solid var(--mor-line-soft);
+    box-shadow: 0 12px 24px rgba(89,57,34,0.12);
+  }
+  html.nav-open .site-header nav.nav-links,
+  html.nav-open .container.navbar .nav-links { display: flex; }
+  .container.navbar .nav-links a {
+    display: block; text-align: center;
+    padding: 12px 16px; font-size: 15px;
+  }
+  .container.navbar .nav-links a:hover { transform: none; }
+
+  /* ── General page layout ────────────────── */
+  .container { width: calc(100% - 32px); }
+  .hero { padding: 36px 0 28px; }
+  .page-hero { padding: 36px 0 24px; }
+  .section { padding: 40px 0; }
+  .hero .lead, .page-hero .lead { font-size: 17px; }
+  .hero .support, .page-hero .support { font-size: 15px; }
+  .kicker { font-size: 17px; margin-bottom: 12px; }
+  .hero-grid, .cards { grid-template-columns: 1fr; gap: 20px; }
+  .cards[style] { grid-template-columns: 1fr !important; }
+  .card-title { font-size: 24px; }
+  .panel { padding: 20px; border-radius: 18px; }
+  .panel .section-title[style] { font-size: 26px !important; }
+  .button-row .btn { flex: 1 1 auto; }
+
+  /* Don't let wide content (e.g. the OD matrix) stretch the grid */
+  .article-grid { grid-template-columns: minmax(0, 1fr); }
+  .article-grid > * { min-width: 0; }
+
+  /* Wide tables scroll sideways instead of breaking the page */
+  .sources-table { display: block; overflow-x: auto; font-size: 13px; }
+  .sources-table th, .sources-table td { padding: 8px; min-width: 110px; overflow-wrap: anywhere; }
+
+  /* ── Home page (index.html) ─────────────── */
+  section.hero,
+  section#numeri,
+  section#features { display: block; min-height: 0; padding: 32px 0; }
+  .hero .container,
+  section#numeri .container,
+  section#features .container {
+    width: 100%; max-width: 100%;
+    padding-left: 16px; padding-right: 16px;
+  }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-image { height: 240px; border-radius: 18px; }
+
+  /* ── Partners ───────────────────────────── */
+  .partner-logos { gap: 28px; padding: 24px; margin-top: 28px; }
+  .partner-logos img { max-width: 40%; max-height: 80px; }
+
+  /* ── Login ──────────────────────────────── */
+  .login-box { padding: 32px 22px; }
+
+  /* ── Article pages (explore-*, vehicle-tracking) ── */
+  .article-wrapper { padding: 28px 16px 56px; }
+  .article-title { font-size: 30px; }
+  .article-lead { font-size: 17px; padding-left: 14px; }
+  .article-meta { flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+  .article-image-wrap { aspect-ratio: 16/10; margin-bottom: 40px; }
+  .article-body { font-size: 16px; line-height: 1.75; }
+  .article-body h2 { font-size: 23px; margin-top: 36px; }
+  .pull-quote { font-size: 19px; margin: 28px 0; padding: 18px 0; }
+  .back-btn { margin-top: 36px; }
+
+  /* ── WebGIS map pages ───────────────────── */
+  /* --hdr is the real header height, measured by mobile.js */
+  body #map,
+  body #anim-overlay { top: var(--hdr, 62px); left: 0; right: 0; }
+
+  body #filter-panel,
+  body #legend-panel {
+    top: var(--hdr, 62px);
+    height: calc(100% - var(--hdr, 62px));
+    width: min(86vw, 340px);
+    z-index: 1200;
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 24px rgba(0,0,0,0.18);
+  }
+  body #filter-panel { left: 0; transform: translateX(-105%); }
+  body #legend-panel { right: 0; transform: translateX(105%); }
+  html.show-filter #filter-panel,
+  html.show-legend #legend-panel { transform: none; }
+
+  /* Bigger touch targets inside the panels */
+  body .acc-header { padding: 15px 18px; }
+  body .layer-eye, body .anim-btn { font-size: 18px; padding: 4px 6px; }
+  body .acc-title { white-space: normal; }
+
+  .gis-backdrop {
+    display: block; position: absolute; left: 0; right: 0; bottom: 0;
+    top: var(--hdr, 62px);
+    background: rgba(0,0,0,0.35); z-index: 1100;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  html.show-filter .gis-backdrop,
+  html.show-legend .gis-backdrop { opacity: 1; pointer-events: auto; }
+
+  .gis-mobile-bar {
+    display: flex; gap: 10px;
+    position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%);
+    z-index: 1050;
+  }
+  .gis-mobile-bar button {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 11px 18px; border-radius: 999px;
+    border: 1px solid var(--mor-brown);
+    background: var(--mor-brown); color: #fff;
+    font-family: 'Raleway', sans-serif; font-size: 14px; font-weight: 600;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25); cursor: pointer; white-space: nowrap;
+  }
+  .gis-mobile-bar button.secondary { background: #fff; color: var(--mor-brown); }
+  body .leaflet-control-attribution { font-size: 9px; max-width: 60vw; }
+}
+
+/* ═════════════ Small phones ═════════════ */
+@media (max-width: 420px) {
+  .hero h1, .page-hero h1 { font-size: 30px; }
+  .article-title { font-size: 26px; }
+  .container.navbar .lang-btn { padding: 5px 10px; font-size: 12px; }
+  .hero-image { height: 200px; }
+}
