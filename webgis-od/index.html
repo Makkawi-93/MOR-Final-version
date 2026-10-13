@@ -68,6 +68,7 @@
         #anim-overlay { position: absolute; top: 86px; left: 280px; right: 320px; bottom: 0; pointer-events: none; z-index: 500; overflow: hidden; }
         #anim-overlay svg { width: 100%; height: 100%; }
     </style>
+    <link rel="stylesheet" href="../mobile.css">
 </head>
 <body>
 <header class="site-header">
@@ -230,8 +231,8 @@
 <script>
 var map = L.map('map', { zoomControl:true, maxZoom:28, minZoom:1 })
     .fitBounds([[44.3,7.2],[45.1,9.0]]);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>', subdomains:'abcd', maxZoom:28
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    attribution:'Tiles © <a href="https://www.esri.com">Esri</a> — Esri, HERE, Garmin, © OpenStreetMap contributors', maxNativeZoom:16, maxZoom:28
 }).addTo(map);
 
 var autolinker = new Autolinker({truncate:{length:30,location:'smart'}});
@@ -522,6 +523,7 @@ function updateLegend() {
 
 setTimeout(function(){ map.invalidateSize(); }, 100);
 </script>
+<script src="../mobile.js"></script>
 <script src="../lang.js"></script>
 </body>
 </html>
