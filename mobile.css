@@ -127,39 +127,44 @@
   body #map,
   body #anim-overlay { top: var(--hdr, 62px); left: 0; right: 0; }
 
+  /* Panels open as bottom sheets: the map stays visible above them */
   body #filter-panel,
   body #legend-panel {
-    top: var(--hdr, 62px);
-    height: calc(100% - var(--hdr, 62px));
-    width: min(86vw, 340px);
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: 100%;
+    height: 42vh;
+    border: 0;
+    border-top: 1px solid #ead9be;
+    border-radius: 16px 16px 0 0;
     z-index: 1200;
+    transform: translateY(105%);
     transition: transform 0.25s ease;
-    box-shadow: 0 0 24px rgba(0,0,0,0.18);
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.18);
   }
-  body #filter-panel { left: 0; transform: translateX(-105%); }
-  body #legend-panel { right: 0; transform: translateX(105%); }
   html.show-filter #filter-panel,
   html.show-legend #legend-panel { transform: none; }
 
   /* Bigger touch targets inside the panels */
   body .acc-header { padding: 15px 18px; }
   body .layer-eye, body .anim-btn { font-size: 18px; padding: 4px 6px; }
-  body .acc-title { white-space: normal; }
+  body .acc-title { flex: 1; }
+  /* the sheet is short: scroll its rows instead of squashing them */
+  body #filter-panel > *, body #legend-panel > * { flex-shrink: 0; }
 
-  .gis-backdrop {
-    display: block; position: absolute; left: 0; right: 0; bottom: 0;
-    top: var(--hdr, 62px);
-    background: rgba(0,0,0,0.35); z-index: 1100;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
-  }
-  html.show-filter .gis-backdrop,
-  html.show-legend .gis-backdrop { opacity: 1; pointer-events: auto; }
+  /* no dark overlay: the map must stay usable while a sheet is open */
+  .gis-backdrop { display: none; }
 
   .gis-mobile-bar {
     display: flex; gap: 10px;
     position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%);
-    z-index: 1050;
+    z-index: 1250;
+    transition: bottom 0.25s ease;
   }
+  /* buttons ride on top of the open sheet */
+  html.show-filter .gis-mobile-bar,
+  html.show-legend .gis-mobile-bar { bottom: calc(42vh + 10px); }
+  html.show-filter .gis-mobile-bar [data-panel="filter"],
+  html.show-legend .gis-mobile-bar [data-panel="legend"] { outline: 3px solid var(--mor-gold); }
   .gis-mobile-bar button {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 11px 18px; border-radius: 999px;
