@@ -62,13 +62,8 @@
         .site-header { background: #e8d5b0; backdrop-filter: none; border-bottom-color: #d4bfa0; }
         #filter-panel { background: #fdf8f0 !important; border-right-color: #ead9be; }
         #legend-panel { background: #fdf8f0 !important; border-left-color: #ead9be; }
-
-        /* user info in navbar */
-        #user-info { display: flex; align-items: center; gap: 10px; margin-left: 16px; padding-left: 16px; border-left: 1px solid #c8a87a; }
-        #user-email { font-size: 12px; font-weight: 600; color: var(--mor-brown); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        #logout-btn { padding: 6px 14px; background: var(--mor-brown); color: #fff; border: none; border-radius: 999px; font-family: 'Raleway', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-        #logout-btn:hover { background: var(--mor-brown-soft); }
     </style>
+    <link rel="stylesheet" href="../mobile.css">
 </head>
 <body>
 <header class="site-header">
@@ -86,10 +81,6 @@
     <div class="lang-switcher">
       <button class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
       <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
-    </div>
-    <div id="user-info">
-      <span id="user-email"></span>
-      <button id="logout-btn" onclick="handleLogout()">&#x2192; Logout</button>
     </div>
   </div>
 </header>
@@ -240,7 +231,7 @@
 
 <script>
 var map = L.map('map', { zoomControl:true, maxZoom:28, minZoom:1 }).fitBounds([[44.3,7.2],[45.1,9.0]]);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', { attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>', subdomains:'abcd', maxZoom:28 }).addTo(map);
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution:'Tiles © <a href="https://www.esri.com">Esri</a> — Esri, HERE, Garmin, © OpenStreetMap contributors', maxNativeZoom:16, maxZoom:28 }).addTo(map);
 
 var pattern_frana = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#a5480e',angle:45,opacity:1});
 var pattern_idraulica = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#377eb8',angle:135,opacity:1});
@@ -272,7 +263,7 @@ var layer_Slopeanalysis_1  = L.imageOverlay('data/Slopeanalysis_1.png',  [[44.66
 var layer_Aspectanalysis_2 = L.imageOverlay('data/Aspectanalysis_2.png', [[44.6644981023804,7.722287223407069],[44.868632262264825,8.13938266589023]]);
 
 // Vector
-var layer_roerocopy_3 = L.geoJson(json_roerocopy_3,{style:function(){return{color:'#232323',weight:1,fillColor:'#d28b41',fillOpacity:0.35};},onEachFeature:function(f,l){evts(l);l.bindPopup(makePopup(f.properties));}});
+var layer_roerocopy_3 = L.geoJson(json_roerocopy_3,{style:function(){return{color:'#232323',weight:1,fillColor:'#d28b41',fillOpacity:0.35};}});
 var layer_rete_ferroviaria_4 = L.geoJson(json_rete_ferroviaria_4,{style:function(){return{color:'#000000',weight:2};}});
 var layer_rete_stradale_5_bg = L.geoJson(json_rete_stradale_5,{style:function(){return{color:'#000000',weight:3,fill:false};}});
 var layer_rete_stradale_5 = L.geoJson(json_rete_stradale_5,{style:function(){return{color:'#ffffff',weight:1.5,fill:false};}});
@@ -510,32 +501,7 @@ function updateLegend() {
 setTimeout(function(){ map.invalidateSize(); }, 100);
 </script>
 
-<!-- Supabase auth guard -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // ─────────────────────────────────────────────────────
-  // PASTE YOUR SUPABASE CREDENTIALS HERE (same values as in login.html)
-  const SUPABASE_URL      = 'https://wwbramligefejlmwxrka.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YnJhbWxpZ2VmZWpsbXd4cmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5NzA0NzAsImV4cCI6MjA5MDU0NjQ3MH0._r-HAZzGG7r0_bR9rrmeQLB4Er-UL0WO7xElqrlkqc8';
-  // ─────────────────────────────────────────────────────
-
-  const { createClient } = supabase;
-  const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  sb.auth.getSession().then(function({ data }) {
-    if (!data.session) {
-      window.location.href = '../login.html';
-    } else {
-      document.getElementById('user-email').textContent = data.session.user.email;
-    }
-  });
-
-  async function handleLogout() {
-    await sb.auth.signOut();
-    window.location.href = '../login.html';
-  }
-</script>
-
+<script src="../mobile.js"></script>
 <script src="../lang.js"></script>
 </body>
 </html>
