@@ -138,6 +138,7 @@
             <div class="acc-arrow">&#9660;</div>
         </div>
         <div class="acc-body" id="body-photo">
+            <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#33a02c;"></div><span data-i18n="gis.photo.ghi">Solar Irradiation (GHI)</span><button class="layer-eye" id="eye-ghi" data-legend-id="leg-ghi" onclick="toggleSingleLayer('ghi', this)" title="Toggle layer">&#128065;</button></div>
             <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#e84040;"></div><span data-i18n="gis.photo.slope">Slope Analysis</span><button class="layer-eye" id="eye-slope" data-legend-id="leg-slope" onclick="toggleSingleLayer('slope', this)" title="Toggle layer">&#128065;</button></div>
             <div class="acc-layer-item"><div class="acc-layer-dot" style="background:#f0a830;"></div><span data-i18n="gis.photo.aspect">Aspect Analysis</span><button class="layer-eye" id="eye-aspect" data-legend-id="leg-aspect" onclick="toggleSingleLayer('aspect', this)" title="Toggle layer">&#128065;</button></div>
         </div>
@@ -261,6 +262,7 @@ function evts(l){ l.on({mouseout:onMouseout,mouseover:highlightFeature}); }
 // Raster
 var layer_Slopeanalysis_1  = L.imageOverlay('data/Slopeanalysis_1.png',  [[44.6644981023804,7.722287223407069],[44.868632262264825,8.13938266589023]]);
 var layer_Aspectanalysis_2 = L.imageOverlay('data/Aspectanalysis_2.png', [[44.6644981023804,7.722287223407069],[44.868632262264825,8.13938266589023]]);
+var layer_GHI_Analisi_0    = L.imageOverlay('data/GHI_Analisi_0.png',    [[44.6644981023804,7.722287223407069],[44.868632262264825,8.13938266589023]]);
 
 // Vector
 var layer_roerocopy_3 = L.geoJson(json_roerocopy_3,{style:function(){return{color:'#232323',weight:1,fillColor:'#d28b41',fillOpacity:0.35};}});
@@ -318,7 +320,7 @@ var groups = {
     study:     [layer_regione_piemonte_11, layer_provincia_di_alessandria_12, layer_provincia_di_asti_13, layer_provincia_di_cuneo_14, layer_roero_15],
     market:    [layer_mercato_16],
     exclusion: [layer_roerocopy_3, layer_corpi_idrici_con_zona_di_buffer_6, layer_rete_natura_10, layer_aree_protette_9, layer_pericolosit_da_frana_elevata_8, layer_pericolosit_idraulica_elevata_7, layer_rete_stradale_5_bg, layer_rete_stradale_5, layer_rete_ferroviaria_4],
-    photo:     [layer_Slopeanalysis_1, layer_Aspectanalysis_2],
+    photo:     [layer_GHI_Analisi_0, layer_Slopeanalysis_1, layer_Aspectanalysis_2],
     catasto:   [layer_wms_catasto],
     lcp:       [layer_wms_lcp],
     inspire:   [layer_wms_parcelle, layer_wms_vestizioni, layer_wms_fabbricati]
@@ -343,7 +345,10 @@ var legends = {
         <div class="legend-item" id="leg-stradale"><div class="legend-swatch" style="background:#fff;border:3px solid #000;height:4px;border-radius:0;padding:0"></div><span class="legend-label" data-i18n="gis.photo.stradale">Rete Stradale</span></div>
         <div class="legend-item" id="leg-ferroviaria"><div class="legend-swatch" style="background:#000;height:4px;border-radius:0;border:none"></div><span class="legend-label" data-i18n="gis.photo.ferroviaria">Rete Ferroviaria</span></div>
         <div class="legend-item" id="leg-roerocopy"><div class="legend-swatch" style="background:#d28b4159"></div><span class="legend-label" data-i18n="gis.photo.roero">Roero municipalities</span></div></div>`,
-    photo:`<div class="legend-group" id="leg-slope"><div class="legend-group-title" data-i18n="gis.photo.slope">Slope Analysis</div>
+    photo:`<div class="legend-group" id="leg-ghi"><div class="legend-group-title" data-i18n="gis.photo.ghi">Solar Irradiation (GHI)</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#b2df8a"></div><span class="legend-label" data-i18n="gis.photo.suit.mod">Idoneità moderata</span></div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#33a02c"></div><span class="legend-label" data-i18n="gis.photo.suit.high">Idoneità elevata</span></div></div>
+        <div class="legend-group" id="leg-slope"><div class="legend-group-title" data-i18n="gis.photo.slope">Slope Analysis</div>
         <div class="legend-item"><div class="legend-swatch" style="background:#e84040"></div><span class="legend-label" data-i18n="gis.photo.suit.none">Non adatto</span></div>
         <div class="legend-item"><div class="legend-swatch" style="background:#f08030"></div><span class="legend-label" data-i18n="gis.photo.suit.vlow">Idoneità molto bassa</span></div>
         <div class="legend-item"><div class="legend-swatch" style="background:#f0d030"></div><span class="legend-label" data-i18n="gis.photo.suit.low">Idoneità bassa</span></div>
@@ -385,6 +390,7 @@ var singleLayerMap = {
     'stradale': [layer_rete_stradale_5_bg, layer_rete_stradale_5],
     'ferroviaria': layer_rete_ferroviaria_4,
     'roerocopy': layer_roerocopy_3,
+    'ghi': layer_GHI_Analisi_0,
     'slope': layer_Slopeanalysis_1,
     'aspect': layer_Aspectanalysis_2,
     'catasto': layer_wms_catasto,
@@ -409,6 +415,7 @@ var layerToGroup = {
     'stradale': 'exclusion',
     'ferroviaria': 'exclusion',
     'roerocopy': 'exclusion',
+    'ghi': 'photo',
     'slope': 'photo',
     'aspect': 'photo',
     'catasto': 'catasto',
@@ -422,7 +429,7 @@ var groupEyes = {
     study: ['eye-roero', 'eye-cuneo', 'eye-asti', 'eye-alessandria', 'eye-regione'],
     market: ['eye-market'],
     exclusion: ['eye-natura', 'eye-aree', 'eye-frana', 'eye-idraulica', 'eye-corpi', 'eye-stradale', 'eye-ferroviaria', 'eye-roerocopy'],
-    photo: ['eye-slope', 'eye-aspect'],
+    photo: ['eye-ghi', 'eye-slope', 'eye-aspect'],
     catasto: ['eye-catasto'],
     lcp: ['eye-lcp'],
     inspire: ['eye-parcelle', 'eye-vestizioni', 'eye-fabbricati']
