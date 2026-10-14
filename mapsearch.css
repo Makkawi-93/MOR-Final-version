@@ -1,0 +1,69 @@
+/* MOR – coordinate search bar for the WebGIS map pages (used with mapsearch.js) */
+.map-search {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  z-index: 1000;
+  width: min(440px, calc(100% - 120px));
+  font-family: 'Raleway', sans-serif;
+}
+.map-search form {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff;
+  border: 1px solid #593922;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(89,57,34,0.15);
+  padding: 4px 4px 4px 14px;
+}
+.map-search svg { flex-shrink: 0; color: #684935; }
+.map-search input {
+  flex: 1; min-width: 0;
+  border: 0; outline: 0; background: transparent;
+  font: 500 14px 'Raleway', sans-serif; color: #593922;
+  padding: 8px 0;
+}
+.map-search input::placeholder { color: #9a8473; }
+.map-search .map-search-go {
+  border: 0; border-radius: 999px;
+  background: #593922; color: #fff;
+  font: 600 13px 'Raleway', sans-serif;
+  padding: 8px 16px; cursor: pointer;
+}
+.map-search .map-search-go:hover { background: #684935; }
+.map-search .map-search-clear {
+  flex-shrink: 0;
+  width: 28px; height: 28px; padding: 0;
+  border: 0; border-radius: 50%;
+  background: transparent; color: #9a8473;
+  font-size: 20px; line-height: 1; cursor: pointer;
+}
+.map-search .map-search-clear:hover { background: #f3ebde; color: #593922; }
+.map-search .map-search-clear[hidden] { display: none; }
+/* only used for the "not recognised" message */
+.map-search-note {
+  display: none; margin: 6px auto 0;
+  font-size: 11px; color: #684935;
+  background: rgba(253,248,240,0.92);
+  border-radius: 6px; padding: 3px 8px;
+}
+.map-search-note.error { display: table; color: #9b2c1f; }
+
+/* result popup */
+.map-search-pop { font-family: 'Raleway', sans-serif; color: #593922; min-width: 200px; }
+.map-search-pop .msp-title { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+.map-search-pop .msp-coords { font-size: 12px; color: #684935; }
+.map-search-pop .msp-status {
+  font-size: 12px; margin-top: 8px; padding-left: 8px;
+  border-left: 3px solid #3b7a2a; color: #3b5a2a;
+}
+.map-search-pop .msp-status.inside { border-left-color: #a8322a; color: #7a2a22; }
+.map-search-pop .msp-remove {
+  display: inline-block; margin-top: 10px;
+  font-size: 12px; color: #684935; text-decoration: underline;
+}
+.map-search-pop .msp-remove:hover { color: #593922; }
+
+/* phones */
+@media (max-width: 860px) {
+  .map-search { top: 10px; width: calc(100% - 20px); }
+  .map-search input { font-size: 16px; } /* stops iOS from zooming the page */
+  .leaflet-top.leaflet-left { top: 58px; }
+}
