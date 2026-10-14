@@ -232,7 +232,7 @@
 
 <script>
 var map = L.map('map', { zoomControl:true, maxZoom:28, minZoom:1 }).fitBounds([[44.3,7.2],[45.1,9.0]]);
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', { attribution:'Tiles © <a href="https://www.esri.com">Esri</a> — Esri, HERE, Garmin, © OpenStreetMap contributors', maxNativeZoom:16, maxZoom:28 }).addTo(map);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxNativeZoom:19, maxZoom:28, opacity:0.4 }).addTo(map);
 
 var pattern_frana = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#a5480e',angle:45,opacity:1});
 var pattern_idraulica = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#377eb8',angle:135,opacity:1});
