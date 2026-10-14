@@ -63,6 +63,7 @@
         #filter-panel { background: #fdf8f0 !important; border-right-color: #ead9be; }
         #legend-panel { background: #fdf8f0 !important; border-left-color: #ead9be; }
     </style>
+    <link rel="stylesheet" href="../mapsearch.css">
     <link rel="stylesheet" href="../mobile.css">
 </head>
 <body>
@@ -232,7 +233,17 @@
 
 <script>
 var map = L.map('map', { zoomControl:true, maxZoom:28, minZoom:1 }).fitBounds([[44.3,7.2],[45.1,9.0]]);
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxNativeZoom:19, maxZoom:28, opacity:0.4 }).addTo(map);
+// Basemap: Esri Light Gray Canvas + labels (labels drawn above the data layers)
+var esriAttrib = 'Tiles &copy; <a href="https://www.esri.com">Esri</a> &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors';
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    attribution: esriAttrib, maxNativeZoom:16, maxZoom:28
+}).addTo(map);
+map.createPane('basemapLabels');
+map.getPane('basemapLabels').style.zIndex = 560;
+map.getPane('basemapLabels').style.pointerEvents = 'none';
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+    pane: 'basemapLabels', maxNativeZoom:16, maxZoom:28
+}).addTo(map);
 
 var pattern_frana = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#a5480e',angle:45,opacity:1});
 var pattern_idraulica = new L.StripePattern({weight:1.5,spaceWeight:3.5,color:'#377eb8',angle:135,opacity:1});
@@ -510,5 +521,6 @@ setTimeout(function(){ map.invalidateSize(); }, 100);
 
 <script src="../mobile.js"></script>
 <script src="../lang.js"></script>
+<script src="../mapsearch.js"></script>
 </body>
 </html>
