@@ -5,6 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Layer agrifotovoltaico – MOR</title>
   <link rel="stylesheet" href="shared.css">
+  <style>
+    /* Methodology box – same styling as origin-destination.html */
+    .method-box {
+      background: #fdf8f0;
+      border: 1px solid #d4bfa0;
+      border-left: 4px solid #593922;
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-top: 22px;
+    }
+    .method-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: #593922;
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .method-box p {
+      font-size: 15px;
+      color: #684935;
+      margin: 0 0 10px;
+      line-height: 1.75;
+    }
+    .method-box p:last-child { margin-bottom: 0; }
+    .article-copy > .method-box:first-child { margin-top: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* Figure 1 – framed like the OD matrix area */
+    .method-figure { margin: 14px 0 16px; }
+    .method-figure-frame {
+      display: block; overflow-x: auto;
+      background: #fff; border: 1px solid #ead9be; border-radius: 6px; padding: 8px;
+    }
+    .method-figure img { width: 100%; height: auto; margin: 0 auto; }
+    .method-figure figcaption {
+      font-size: 13px; font-style: italic; color: #684935;
+      text-align: center; margin-top: 8px; line-height: 1.5;
+    }
+
+    /* References */
+    .method-refs { margin-top: 20px; padding-top: 14px; border-top: 1px solid #ead9be; }
+    .method-box .method-refs p.method-ref {
+      font-size: 14px; line-height: 1.65;
+      padding-left: 1.6em; text-indent: -1.6em; margin-bottom: 8px;
+    }
+
+    /* Visible, wrapping links in the methodology and sources table */
+    .method-ref a, #gis-sources .sources-table a {
+      color: var(--mor-rust); text-decoration: underline; overflow-wrap: anywhere;
+    }
+    #methodology, #gis-sources { scroll-margin-top: 100px; }
+
+    /* Phones: keep the figure legible – it scrolls sideways inside its frame */
+    @media (max-width: 600px) {
+      .method-box { padding: 16px 14px; }
+      .method-figure img { min-width: 560px; }
+    }
+  </style>
   <link rel="stylesheet" href="mobile.css">
 </head>
 <body>
@@ -34,7 +93,11 @@
       <h1 data-i18n="pho.h1">Layer agrifotovoltaico</h1>
       <p class="lead" data-i18n="pho.lead">Mappatura territoriale di terreni censiti per analisi localizzative.</p>
       <p class="support" data-i18n="pho.support">Questo layer raccoglie e visualizza i dati geografici relativi agli elementi considerati nel progetto per analisi territoriali connesse al fotovoltaico.</p>
-      <div class="button-row"><a class="btn primary" href="webgis-photovoltaic/index.html" data-i18n="pho.btn.map">&#128506; Apri Mappa Fotovoltaico</a></div>
+      <div class="button-row">
+        <a class="btn secondary" href="#methodology" data-i18n="pho.btn.method">&#8595; Metodologia</a>
+        <a class="btn secondary" href="#gis-sources" data-i18n="pho.btn.gis">&#8595; Fonti dati GIS</a>
+        <a class="btn primary" href="webgis-photovoltaic/index.html" data-i18n="pho.btn.map">&#128506; Apri Mappa Fotovoltaico</a>
+      </div>
     </div>
   </main>
 
@@ -42,34 +105,97 @@
     <div class="container article-grid">
       <div class="article-image"><img src="images/photovoltaic.png" alt="Layer agrifotovoltaico del Roero"></div>
       <div class="panel article-copy">
-        <p data-i18n="pho.p1">La consultazione consente di localizzare gli elementi censiti e leggerli nel contesto spaziale del Roero, senza entrare in valutazioni economiche, progettuali o autorizzative.</p>
-        <p data-i18n="pho.p2">Il layer è stato sviluppato come componente informativa e costituisce una base cartografica utile per successive analisi. La resa finale del WebGIS può essere affiancata da un breve paragrafo metodologico che descriva i criteri di selezione, gli attributi visualizzati e l'eventuale distinzione tra terreni, coltivi ed elementi soggetti a vincoli.</p>
-        <div class="note-box" data-i18n="pho.note"><strong>Da completare:</strong> la sezione descrittiva di dati e metodologia può essere raffinata appena hai l'elenco definitivo dei campi effettivamente pubblicati nella mappa.</div>
+        <section class="method-box" id="methodology">
+          <h3 data-i18n="pho.method.title">Metodologia</h3>
+          <p data-i18n="pho.method.p1">Per individuare le aree potenzialmente idonee all'installazione di sistemi agrivoltaici a supporto del Mercato Ortofrutticolo del Roero (MOR), è stata condotta un'analisi di idoneità territoriale sull'intera area del Roero (41.704 ha). L'analisi è stata articolata in due fasi: l'individuazione dei fattori di esclusione, che definiscono le aree in cui un'installazione non è consentita o non è sicura, e l'analisi dei fattori di valutazione, che classificano il territorio restante in base all'irraggiamento solare e alla morfologia del terreno (Figura 1). Tutti i layer sono stati proiettati nel sistema di riferimento comune WGS 84 / UTM Zona 32N (EPSG:32632), garantendo coerenza geometrica e precisione metrica in tutte le fasi di elaborazione.</p>
+
+          <figure class="method-figure">
+            <a class="method-figure-frame" href="images/PV_suitability_chart.png" target="_blank" rel="noopener">
+              <img src="images/PV_suitability_chart.png" alt="Figure 1 – PV Suitability: Exclusion Factors (Natural Assets, Natural Hazard, Water Bodies, Infrastructures) and Evaluation Factors (Radiation, DSM)">
+            </a>
+            <figcaption data-i18n="pho.method.fig">Figura 1. Struttura dell'analisi di idoneità agrivoltaica: fattori di esclusione e fattori di valutazione.</figcaption>
+          </figure>
+
+          <p data-i18n="pho.method.p2"><strong>Fattori di esclusione.</strong> Il primo gruppo riguarda i beni naturali: i siti della rete Natura 2000 (SCI/SAC e SPA), le aree protette iscritte nell'Elenco Ufficiale delle Aree Protette (EUAP), le Important Bird Areas (IBA) e le zone umide di importanza internazionale (Ramsar), tutti ottenuti dal geoportale del Ministero dell'Ambiente e della Sicurezza Energetica (MASE). Il secondo gruppo comprende i rischi naturali, ovvero le aree a pericolosità elevata da frana e da alluvione, derivate dagli open data IdroGEO di ISPRA; escluderle protegge gli impianti da danni strutturali, ne garantisce l'affidabilità e riduce i costi di manutenzione. Il terzo gruppo riguarda i corpi idrici, fiumi e laghi, ai quali è stato applicato un buffer di 150 m in conformità alla normativa italiana sulla tutela dei corsi d'acqua e delle relative sponde (D.Lgs. n. 42/2004, art. 142). Infine, le reti stradale e ferroviaria sono state incluse tra i fattori di esclusione. I corpi idrici e le reti infrastrutturali sono stati estratti dal dataset OpenStreetMap per l'Italia distribuito da Geofabrik e ritagliati sull'area del Roero. Tutti i fattori di esclusione sono stati infine uniti in un unico layer che individua i terreni non disponibili per l'agrivoltaico.</p>
+          <p data-i18n="pho.method.p3"><strong>Fattori di valutazione.</strong> L'irraggiamento solare è stato descritto mediante l'irradiazione globale orizzontale (GHI), ricavata dal Global Solar Atlas. La morfologia del terreno è stata derivata da un modello digitale di superficie (DSM) a 5 m fornito dalla Regione Piemonte: le quattro tavole che coprono l'area di studio sono state mosaicate e ritagliate sui confini del Roero, e dalla superficie risultante sono state calcolate pendenza ed esposizione. Ciascun fattore è stato riclassificato in cinque classi di idoneità, da 1 (molto bassa) a 5 (molto alta), sulla base degli intervalli di classe proposti in studi recenti sull'idoneità dei siti per il fotovoltaico e l'agrivoltaico in Italia (Rogna, 2020; Fattoruso et al., 2024; Neri et al., 2024; Angelelli et al., 2025).</p>
+          <p data-i18n="pho.method.p4">Per la GHI sono state definite cinque classi, da meno di 1.000 a oltre 1.600 kWh/m²/anno; i valori nel Roero, compresi tra 1.366 e 1.455 kWh/m²/anno, ricadono solo nelle classi 3 e 4: l'irraggiamento è quindi buono e piuttosto uniforme sull'intera area. Per la pendenza, l'idoneità diminuisce all'aumentare dell'inclinazione, dai terreni pianeggianti (0–1%, classe 5) ai versanti con pendenza del 13–15% (classe 1), mentre i terreni con pendenza superiore al 15% sono considerati non idonei; poiché nel Roero la pendenza varia dallo 0% al 96%, questo è il fattore che differenzia maggiormente il territorio. Per l'esposizione, la rosa dei venti è stata suddivisa in otto settori di 45° e l'idoneità segue il percorso del sole: i versanti esposti a sud e i terreni pianeggianti (pendenza inferiore all'1%) ricevono la classe più alta, seguiti da sud-est e sud-ovest, est e ovest, nord-est e nord-ovest, mentre i versanti esposti a nord ricevono la classe più bassa.</p>
+          <p data-i18n="pho.method.p5">Per supportare l'interpretazione dei risultati, tutti i layer sono stati pubblicati nella piattaforma WebGIS, organizzati negli stessi gruppi dell'analisi: area di studio, posizione del mercato, fattori di esclusione, idoneità fotovoltaica, catasto e copertura del suolo, ciascuno con la propria legenda. L'utente può così localizzare un terreno sulla mappa, verificare che non ricada in alcuna area di esclusione, leggerne la classe di idoneità per ciascun fattore e, attraverso il catasto e la copertura del suolo, visualizzarne i confini e l'uso attuale, valutando in modo trasparente se il sito sia idoneo a un impianto agrivoltaico.</p>
+
+          <div class="method-refs">
+            <h3 data-i18n="pho.refs.title">Riferimenti bibliografici</h3>
+            <p class="method-ref">Angelelli, I., Codato, D., Pappalardo, S. E., &amp; De Marchi, M. (2025). Developing a methodology for assessing visual and environmental sensitivity for agrivoltaics land suitability projects: The case study of Viterbo Province (Italy). ISPRS International Journal of Geo-Information, 14(3), 115. <a href="https://doi.org/10.3390/ijgi14030115" target="_blank" rel="noopener">https://doi.org/10.3390/ijgi14030115</a></p>
+            <p class="method-ref">Fattoruso, G., Toscano, D., Venturo, A., Scognamiglio, A., Fabricino, M., &amp; Di Francia, G. (2024). A spatial multicriteria analysis for a regional assessment of eligible areas for sustainable agrivoltaic systems in Italy. Sustainability, 16(2), 911. <a href="https://doi.org/10.3390/su16020911" target="_blank" rel="noopener">https://doi.org/10.3390/su16020911</a></p>
+            <p class="method-ref">Neri, B., et al. (2024). Renewable energy communities in rural areas: A hybrid GIS-MCDM approach for agrivoltaic systems site selection. <a href="https://iris.unimore.it/handle/11380/1381171" target="_blank" rel="noopener">https://iris.unimore.it/handle/11380/1381171</a></p>
+            <p class="method-ref">Rogna, M. (2020). A first-phase screening method for site selection of large-scale solar plants with an application to Italy. Land Use Policy, 99, 104839. <a href="https://doi.org/10.1016/j.landusepol.2020.104839" target="_blank" rel="noopener">https://doi.org/10.1016/j.landusepol.2020.104839</a></p>
+          </div>
+        </section>
       </div>
-      <div class="panel">
+
+      <section class="panel" id="gis-sources">
         <h2 class="section-title" style="font-size:32px;" data-i18n="gis.title">Fonti dati GIS</h2>
-        <p class="section-intro" style="margin-bottom:0;" data-i18n="gis.intro">Le fonti riportate fanno riferimento ai dataset utilizzati per la costruzione del layer e sono indicate con il relativo anno di riferimento e regime di licenza, ove disponibile.</p>
+        <p class="section-intro" style="margin-bottom:0;" data-i18n="pho.gis.intro">Le fonti riportate fanno riferimento ai dataset utilizzati per la costruzione del layer.</p>
         <table class="sources-table">
           <thead>
             <tr>
-              <th data-i18n="th.name">Nome dataset</th>
-              <th data-i18n="th.year">Anno di riferimento</th>
+              <th data-i18n="pho.th.dataset">Dataset</th>
               <th data-i18n="th.source">Fonte</th>
-              <th data-i18n="th.license">Licenza</th>
               <th data-i18n="th.link">Link</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td data-i18n="common.to_complete">Da completare</td>
-              <td data-i18n="common.to_complete">Da completare</td>
-              <td data-i18n="common.to_complete">Da completare</td>
-              <td data-i18n="common.to_complete">Da completare</td>
-              <td data-i18n="common.to_complete">Da completare</td>
+              <td data-i18n="pho.data.natura">Rete Natura 2000 (SCI/SAC, SPA)</td>
+              <td data-i18n="pho.src.mase">MASE – Geoportale Nazionale</td>
+              <td><a href="https://gn.mase.gov.it/portale/en/web/geoportale-mase/nature" target="_blank" rel="noopener">gn.mase.gov.it</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.euap">Aree protette (EUAP)</td>
+              <td data-i18n="pho.src.mase">MASE – Geoportale Nazionale</td>
+              <td><a href="https://gn.mase.gov.it/portale/en/web/geoportale-mase/nature" target="_blank" rel="noopener">gn.mase.gov.it</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.iba">Important Bird Areas (IBA)</td>
+              <td data-i18n="pho.src.mase">MASE – Geoportale Nazionale</td>
+              <td><a href="https://gn.mase.gov.it/portale/en/web/geoportale-mase/nature" target="_blank" rel="noopener">gn.mase.gov.it</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.ramsar">Zone umide Ramsar</td>
+              <td data-i18n="pho.src.mase">MASE – Geoportale Nazionale</td>
+              <td><a href="https://gn.mase.gov.it/portale/en/web/geoportale-mase/nature" target="_blank" rel="noopener">gn.mase.gov.it</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.hazard">Pericolosità da frana e da alluvione</td>
+              <td>ISPRA – IdroGEO</td>
+              <td><a href="https://idrogeo.isprambiente.it/app/page/open-data" target="_blank" rel="noopener">idrogeo.isprambiente.it</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.water">Corpi idrici (fiumi, laghi)</td>
+              <td data-i18n="pho.src.geofabrik">Geofabrik (OpenStreetMap, Italia)</td>
+              <td><a href="https://download.geofabrik.de/europe/italy.html" target="_blank" rel="noopener">download.geofabrik.de</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.roads">Reti stradale e ferroviaria</td>
+              <td data-i18n="pho.src.geofabrik">Geofabrik (OpenStreetMap, Italia)</td>
+              <td><a href="https://download.geofabrik.de/europe/italy.html" target="_blank" rel="noopener">download.geofabrik.de</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.ghi">Irradiazione globale orizzontale (GHI)</td>
+              <td>Global Solar Atlas</td>
+              <td><a href="https://globalsolaratlas.info/download/italy" target="_blank" rel="noopener">globalsolaratlas.info</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.dsm">DSM 5 m</td>
+              <td>Regione Piemonte – Geoportale Piemonte</td>
+              <td><a href="https://www.geoportale.piemonte.it" target="_blank" rel="noopener">www.geoportale.piemonte.it</a></td>
+            </tr>
+            <tr>
+              <td data-i18n="pho.data.study">Area di studio</td>
+              <td>ISTAT</td>
+              <td><a href="https://www.istat.it" target="_blank" rel="noopener">www.istat.it</a></td>
             </tr>
           </tbody>
         </table>
-      </div>
+      </section>
     </div>
   </section>
 
